@@ -135,7 +135,7 @@ body {
 <body>
 <div id="app">
 <div id="header">
-  <span id="brand" data-i18n="brand">灵感捕手</span>
+  <span id="brand" data-i18n="brand">Inspiration</span>
   <div id="header-actions">
     <button id="btn-expand" data-i18n-title="expand" title="切换完整视图">&#9776;</button>
     <button id="btn-sync" data-i18n-title="sync" title="同步">&#x21bb;</button>
@@ -172,7 +172,7 @@ body {
 <div id="modal-rewrite" class="modal hidden">
   <div class="modal-backdrop"></div>
   <div class="modal-content">
-    <h3 data-i18n="aiRewrite">AI 润色</h3>
+    <h3 data-i18n="aiRewrite">AI 功能</h3>
     <div class="rewrite-compare">
       <div>
         <strong data-i18n="original">原文</strong>
@@ -180,7 +180,7 @@ body {
       </div>
     </div>
     <div>
-      <strong data-i18n="rewritten">润色后</strong>
+      <strong data-i18n="rewritten">结果</strong>
       <textarea id="rewrite-result" rows="4"></textarea>
     </div>
     <div class="rewrite-tags" id="rewrite-tags-block">
@@ -207,13 +207,17 @@ body {
       </select></label>
     </fieldset>
     <fieldset>
+      <legend data-i18n="shortcutLabel">快捷键</legend>
+      <label><input type="text" id="shortcut-input" placeholder="Ctrl+Shift+I"></label>
+    </fieldset>
+    <fieldset>
       <legend data-i18n="webdavSync">WebDAV 同步</legend>
       <label data-i18n="webdavUrl">地址 <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
       <label data-i18n="webdavUser">用户名 <input type="text" id="webdav-user"></label>
       <label data-i18n="webdavPass">密码 <input type="password" id="webdav-pass"></label>
     </fieldset>
     <fieldset>
-      <legend data-i18n="aiConfig">AI 润色 (OpenAI 兼容 API)</legend>
+      <legend data-i18n="aiConfig">AI 功能 (OpenAI 兼容 API)</legend>
       <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
       <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com/v1/chat/completions"></label>
       <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-v4-flash"></label>
@@ -251,17 +255,17 @@ body {
 // === i18n ===
 const L = {
   zh: {
-    brand: '灵感捕手', expand: '切换完整视图', sync: '同步', settings: '设置',
+    brand: 'Inspiration', expand: '切换完整视图', sync: '同步', settings: '设置',
     inputPlaceholder: '在想什么？\n支持 Markdown。回车保存。',
     send: '保存 (Enter)', saved: '已保存!',
     todos: '待办', searchPlaceholder: '搜索...', newestFirst: '最新优先', oldestFirst: '最早优先',
     emptyState: '还没有想法。按 Ctrl+Shift+I 开始捕捉。',
-    aiRewrite: 'AI 润色', original: '原文', rewritten: '润色后',
+    aiRewrite: 'AI 功能', original: '原文', rewritten: '结果',
     suggestedTagsLabel: '建议标签（点击选择）：', cancel: '取消', apply: '应用',
     settingsTitle: '设置',
     language: '语言 / Language', webdavSync: 'WebDAV 同步',
     webdavUrl: '地址', webdavUser: '用户名', webdavPass: '密码',
-    aiConfig: 'AI 润色 (OpenAI 兼容 API)', aiKey: 'API 密钥',
+    aiConfig: 'AI 功能 (OpenAI 兼容 API)', aiKey: 'API 密钥',
     aiEndpoint: '接口地址', aiModel: '模型',
     save: '保存',
     addTag: '添加标签', newTagPlaceholder: '或输入新标签名...', add: '添加', close: '关闭',
@@ -270,10 +274,10 @@ const L = {
     deleteConfirm: '确定删除这条想法？', saveFailed: '保存失败：',
     deleteFailed: '删除失败：', syncFailed: '同步失败：',
     syncing: '同步中...', synced: '同步完成：', up: '上传', down: '下载',
-    aiFailed: 'AI 润色失败：', rewriteFailed: '应用失败：',
-    tagAdded: '标签已添加：', applied: '润色已应用',
+    aiFailed: 'AI 功能失败：', rewriteFailed: '应用失败：',
+    tagAdded: '标签已添加：', applied: '已应用',
     settingsSaved: '设置已保存', settingsSaveFailed: '保存设置失败：',
-    loadFail: '加载失败：',
+    loadFail: '加载失败：', shortcutLabel: '快捷键',
   },
   en: {
     brand: 'Inspiration', expand: 'Toggle full view', sync: 'Sync', settings: 'Settings',
@@ -281,12 +285,12 @@ const L = {
     send: 'Save (Enter)', saved: 'Saved!',
     todos: 'Todos', searchPlaceholder: 'Search...', newestFirst: 'Newest first', oldestFirst: 'Oldest first',
     emptyState: 'No ideas yet. Press Ctrl+Shift+I to start capturing.',
-    aiRewrite: 'AI Rewrite', original: 'Original', rewritten: 'Rewritten',
+    aiRewrite: 'AI Tools', original: 'Original', rewritten: 'Result',
     suggestedTagsLabel: 'Suggested tags (click to select):', cancel: 'Cancel', apply: 'Apply',
     settingsTitle: 'Settings',
     language: 'Language / 语言', webdavSync: 'WebDAV Sync',
     webdavUrl: 'URL', webdavUser: 'Username', webdavPass: 'Password',
-    aiConfig: 'AI Rewrite (OpenAI-compatible API)', aiKey: 'API Key',
+    aiConfig: 'AI Tools (OpenAI-compatible API)', aiKey: 'API Key',
     aiEndpoint: 'Endpoint', aiModel: 'Model',
     save: 'Save',
     addTag: 'Add Tag', newTagPlaceholder: 'Or type a new tag name...', add: 'Add', close: 'Close',
@@ -295,10 +299,10 @@ const L = {
     deleteConfirm: 'Delete this idea?', saveFailed: 'Save failed: ',
     deleteFailed: 'Delete failed: ', syncFailed: 'Sync failed: ',
     syncing: 'Syncing...', synced: 'Synced: ', up: 'up', down: 'down',
-    aiFailed: 'AI rewrite failed: ', rewriteFailed: 'Failed: ',
-    tagAdded: 'Tag added: ', applied: 'Rewrite applied',
+    aiFailed: 'AI tools failed: ', rewriteFailed: 'Failed: ',
+    tagAdded: 'Tag added: ', applied: 'AI applied',
     settingsSaved: 'Settings saved', settingsSaveFailed: 'Save failed: ',
-    loadFail: 'Load failed: ',
+    loadFail: 'Load failed: ', shortcutLabel: 'Shortcut',
   }
 };
 
@@ -363,7 +367,7 @@ function cacheDom() {
     'btn-rewrite-cancel', 'btn-rewrite-apply',
     'modal-settings', 'btn-settings-cancel', 'btn-settings-save',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
-    'lang-select',
+    'lang-select', 'shortcut-input',
   ];
   for (const id of ids) {
     const el = document.getElementById(id);
@@ -625,6 +629,10 @@ async function openSettings() {
       if (savedLang) { lang = savedLang; }
     } catch(e) {}
     if ($.langSelect) $.langSelect.value = lang;
+    // Shortcut
+    try { const sc = await invoke('get_shortcut', {});
+      const si = document.getElementById('shortcut-input'); if (si) si.value = sc;
+    } catch(e) {}
   } catch (e) {}
   if ($.modalSettings) $.modalSettings.classList.remove('hidden');
 }
@@ -648,6 +656,13 @@ async function saveSettings() {
         lang = newLang;
         try { await invoke('save_setting', { key: 'language', value: lang }); } catch(e) {}
         applyLang();
+      }
+    }
+    // Shortcut
+    const si = document.getElementById('shortcut-input');
+    if (si && si.value.trim()) {
+      try { await invoke('change_shortcut', { shortcut: si.value.trim() }); } catch(e) {
+        toast('Shortcut: ' + e, true);
       }
     }
     if ($.modalSettings) $.modalSettings.classList.add('hidden');

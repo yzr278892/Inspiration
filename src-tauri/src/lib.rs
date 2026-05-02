@@ -1,10 +1,19 @@
 use mouse_position::mouse_position::Mouse;
-use tauri::{Emitter, Manager, PhysicalPosition, WindowEvent};
+use std::sync::Mutex;
+use tauri::{
+    menu::{MenuBuilder, MenuItemBuilder},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Emitter, Manager, PhysicalPosition, WindowEvent,
+};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
 mod commands;
 mod db;
 mod sync;
+
+pub struct ShortcutState {
+    pub current: Mutex<String>,
+}
 
 pub fn run() {
     tauri::Builder::default()
@@ -26,10 +35,8 @@ pub fn run() {
                                             let scale = monitor.scale_factor();
                                             let win_w = (size.width as f64 / scale) as i32;
                                             let win_h = (size.height as f64 / scale) as i32;
-
                                             let adj_x = if x + win_w > mon_w { x - win_w - 15 } else { x };
                                             let adj_y = if y + win_h > mon_h { y - win_h - 15 } else { y };
-
                                             let _ = window.set_position(PhysicalPosition::new(
                                                 adj_x.max(0),
                                                 adj_y.max(0),
@@ -50,19 +57,67 @@ pub fn run() {
                 .build(),
         )
         .setup(|app| {
-            let app_dir = app
-                .path()
-                .app_data_dir()
-                .expect("app data dir should exist");
+            let app_dir = app.path().app_data_dir().expect("app data dir should exist");
             std::fs::create_dir_all(&app_dir).ok();
             let db = db::Database::init(app_dir.join("inspiration.db"))
                 .expect("database should initialize");
+
+            // Load saved shortcut or default
+            let shortcut = db
+                .get_setting("shortcut")
+                .unwrap_or(None)
+                .unwrap_or_else(|| "Ctrl+Shift+I".to_string());
+            app.manage(ShortcutState {
+                current: Mutex::new(shortcut.clone()),
+            });
+
+            // Register initial shortcut
+            app.global_shortcut()
+                .register(shortcut.as_str())
+                .expect("global shortcut should register");
+
             app.manage(db);
 
-            #[cfg(any(target_os = "linux", target_os = "windows", target_os = "macos"))]
-            app.global_shortcut()
-                .register("Ctrl+Shift+I")
-                .expect("global shortcut should register");
+            // System tray icon
+            let show_item = MenuItemBuilder::with_id("show", "Show").build(app)?;
+            let quit_item = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
+            let menu = MenuBuilder::new(app)
+                .item(&show_item)
+                .item(&quit_item)
+                .build()?;
+
+            let _tray = TrayIconBuilder::new()
+                .icon(app.default_window_icon().unwrap().clone())
+                .menu(&menu)
+                .tooltip("Inspiration")
+                .on_menu_event(|app, event| {
+                    match event.id().as_ref() {
+                        "show" => {
+                            if let Some(w) = app.get_webview_window("main") {
+                                let _ = w.show();
+                                let _ = w.set_focus();
+                            }
+                        }
+                        "quit" => {
+                            app.exit(0);
+                        }
+                        _ => {}
+                    }
+                })
+                .on_tray_icon_event(|tray, event| {
+                    if let TrayIconEvent::Click {
+                        button: MouseButton::Left,
+                        button_state: MouseButtonState::Up, ..
+                    } = event
+                    {
+                        let app = tray.app_handle();
+                        if let Some(w) = app.get_webview_window("main") {
+                            let _ = w.show();
+                            let _ = w.set_focus();
+                        }
+                    }
+                })
+                .build(app)?;
 
             Ok(())
         })
@@ -90,6 +145,8 @@ pub fn run() {
             commands::hide_window,
             commands::save_setting,
             commands::get_setting,
+            commands::change_shortcut,
+            commands::get_shortcut,
         ])
         .run(tauri::generate_context!())
         .expect("error running tauri application");

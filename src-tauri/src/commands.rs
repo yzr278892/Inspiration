@@ -1,6 +1,7 @@
 use crate::db::{Database, Idea, Tag};
 use serde::{Deserialize, Serialize};
 use tauri::{Manager, State};
+use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RewriteResult {
@@ -270,6 +271,38 @@ pub fn hide_window(app: tauri::AppHandle) -> Result<(), String> {
 #[tauri::command]
 pub fn save_setting(key: String, value: String, db: State<Database>) -> Result<(), String> {
     db.save_setting(&key, &value)
+}
+
+#[tauri::command]
+pub fn change_shortcut(
+    shortcut: String,
+    app: tauri::AppHandle,
+    db: State<Database>,
+    shortcut_state: State<crate::ShortcutState>,
+) -> Result<String, String> {
+    let new_shortcut = shortcut.trim().to_string();
+    if new_shortcut.is_empty() {
+        return Err("Shortcut cannot be empty".into());
+    }
+    let mut current = shortcut_state.current.lock().map_err(|e| format!("Lock: {}", e))?;
+    // Unregister old shortcut
+    app.global_shortcut().unregister(current.as_str()).ok();
+    // Register new
+    app.global_shortcut()
+        .register(new_shortcut.as_str())
+        .map_err(|e| format!("Register: {}", e))?;
+    // Save
+    db.save_setting("shortcut", &new_shortcut)?;
+    *current = new_shortcut.clone();
+    Ok(new_shortcut)
+}
+
+#[tauri::command]
+pub fn get_shortcut(db: State<Database>) -> Result<String, String> {
+    Ok(db
+        .get_setting("shortcut")
+        .unwrap_or(None)
+        .unwrap_or_else(|| "Ctrl+Shift+I".to_string()))
 }
 
 #[tauri::command]
