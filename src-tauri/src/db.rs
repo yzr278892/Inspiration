@@ -250,7 +250,7 @@ impl Database {
         let conn = self.conn.lock().map_err(|e| format!("Lock: {}", e))?;
         let now = chrono::Utc::now().to_rfc3339();
         conn.execute(
-            "UPDATE ideas SET is_todo=1, todo_done=0, updated_at=?1 WHERE id=?2 AND is_todo=0",
+            "UPDATE ideas SET is_todo=1 - is_todo, updated_at=?1 WHERE id=?2",
             params![now, id],
         )
         .map_err(|e| format!("Toggle todo: {}", e))?;

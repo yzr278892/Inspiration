@@ -152,10 +152,53 @@ body {
 </div>
 
 <div id="full-view" class="hidden">
-  <div id="todo-section" class="hidden">
-    <h3 data-i18n="todos">待办</h3>
-    <div id="todo-list"></div>
+  <!-- Tab navigation -->
+  <div id="nav-tabs" style="display:flex;border-bottom:1px solid var(--border);background:var(--surface);">
+    <button class="nav-tab active" data-tab="timeline" style="flex:1;padding:8px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text);border-bottom:2px solid var(--accent);" data-i18n="navTimeline">时间流</button>
+    <button class="nav-tab" data-tab="todos" style="flex:1;padding:8px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text-dim);border-bottom:2px solid transparent;" data-i18n="navTodos">待办</button>
+    <button class="nav-tab" data-tab="settings" style="flex:1;padding:8px;border:none;background:none;cursor:pointer;font-size:13px;color:var(--text-dim);border-bottom:2px solid transparent;" data-i18n="navSettings">设置</button>
   </div>
+
+  <div id="todo-section" class="hidden">
+    <div id="todo-list" style="padding:8px 16px;"></div>
+  </div>
+
+  <!-- Settings panel (inline, not modal) -->
+  <div id="settings-panel" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--border);">
+      <h3 data-i18n="settingsTitle" style="font-size:14px;">设置</h3>
+      <button id="btn-settings-close" class="primary" style="padding:4px 12px;border-radius:6px;border:none;cursor:pointer;background:var(--accent);color:#fff;font-size:12px;" data-i18n="close">关闭</button>
+    </div>
+    <div style="padding:12px 16px;overflow-y:auto;flex:1;">
+      <fieldset>
+        <legend data-i18n="language">语言 / Language</legend>
+        <label><select id="lang-select">
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select></label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="shortcutLabel">快捷键</legend>
+        <label><button id="btn-record-shortcut" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);font-size:13px;min-width:160px;text-align:center;">Ctrl+Shift+I</button></label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="webdavSync">WebDAV 同步</legend>
+        <label data-i18n="webdavUrl">地址 <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
+        <label data-i18n="webdavUser">用户名 <input type="text" id="webdav-user"></label>
+        <label data-i18n="webdavPass">密码 <input type="password" id="webdav-pass"></label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="aiConfig">AI 功能 (OpenAI 兼容 API)</legend>
+        <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
+        <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com"></label>
+        <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-v4-flash"></label>
+      </fieldset>
+      <div class="modal-actions">
+        <button id="btn-settings-save" class="primary" data-i18n="save">保存</button>
+      </div>
+    </div>
+  </div>
+
   <div id="filter-bar">
     <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="搜索...">
     <div id="tag-filters"></div>
@@ -190,41 +233,6 @@ body {
     <div class="modal-actions">
       <button id="btn-rewrite-cancel" data-i18n="cancel">取消</button>
       <button id="btn-rewrite-apply" class="primary" data-i18n="apply">应用</button>
-    </div>
-  </div>
-</div>
-
-<!-- Settings Modal -->
-<div id="modal-settings" class="modal hidden">
-  <div class="modal-backdrop"></div>
-  <div class="modal-content">
-    <h3 data-i18n="settingsTitle">设置</h3>
-    <fieldset>
-      <legend data-i18n="language">语言 / Language</legend>
-      <label><select id="lang-select">
-        <option value="zh">中文</option>
-        <option value="en">English</option>
-      </select></label>
-    </fieldset>
-    <fieldset>
-      <legend data-i18n="shortcutLabel">快捷键</legend>
-      <label><input type="text" id="shortcut-input" placeholder="Ctrl+Shift+I"></label>
-    </fieldset>
-    <fieldset>
-      <legend data-i18n="webdavSync">WebDAV 同步</legend>
-      <label data-i18n="webdavUrl">地址 <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
-      <label data-i18n="webdavUser">用户名 <input type="text" id="webdav-user"></label>
-      <label data-i18n="webdavPass">密码 <input type="password" id="webdav-pass"></label>
-    </fieldset>
-    <fieldset>
-      <legend data-i18n="aiConfig">AI 功能 (OpenAI 兼容 API)</legend>
-      <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
-      <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com"></label>
-      <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-v4-flash"></label>
-    </fieldset>
-    <div class="modal-actions">
-      <button id="btn-settings-cancel" data-i18n="cancel">取消</button>
-      <button id="btn-settings-save" class="primary" data-i18n="save">保存</button>
     </div>
   </div>
 </div>
@@ -278,6 +286,7 @@ const L = {
     tagAdded: '标签已添加：', applied: '已应用',
     settingsSaved: '设置已保存', settingsSaveFailed: '保存设置失败：',
     loadFail: '加载失败：', shortcutLabel: '快捷键',
+    navTimeline: '时间流', navTodos: '待办', navSettings: '设置',
   },
   en: {
     brand: 'Inspiration', expand: 'Toggle full view', sync: 'Sync', settings: 'Settings',
@@ -303,6 +312,7 @@ const L = {
     tagAdded: 'Tag added: ', applied: 'AI applied',
     settingsSaved: 'Settings saved', settingsSaveFailed: 'Save failed: ',
     loadFail: 'Load failed: ', shortcutLabel: 'Shortcut',
+    navTimeline: 'Timeline', navTodos: 'Todos', navSettings: 'Settings',
   }
 };
 
@@ -383,9 +393,9 @@ function cacheDom() {
     'modal-rewrite', 'rewrite-original', 'rewrite-result',
     'rewrite-suggested-tags', 'rewrite-tags-block',
     'btn-rewrite-cancel', 'btn-rewrite-apply',
-    'modal-settings', 'btn-settings-cancel', 'btn-settings-save',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
-    'lang-select', 'shortcut-input',
+    'lang-select', 'settings-panel', 'btn-settings-save', 'btn-settings-close',
+    'btn-record-shortcut',
   ];
   for (const id of ids) {
     const el = document.getElementById(id);
@@ -470,6 +480,7 @@ function renderTodos() {
     return `<div class="todo-item ${cls}">
       <input type="checkbox" data-id="${i.id}" ${i.todo_done ? 'checked' : ''}>
       <span class="todo-text">${escHtml(trunc(i.content, 80))}</span>
+      <button class="todo-delete" data-id="${i.id}" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:4px;padding:1px 6px;cursor:pointer;font-size:11px;color:var(--text-dim);" title="${t('deleteBtn')}">${t('deleteBtn')}</button>
     </div>`;
   }).join('');
 }
@@ -642,17 +653,20 @@ async function openSettings() {
     const ak = document.getElementById('ai-key'); if (ak) ak.value = ac ? ac.api_key : '';
     const ae = document.getElementById('ai-endpoint'); if (ae) ae.value = (ac && ac.endpoint) ? ac.endpoint : 'https://api.deepseek.com';
     const am = document.getElementById('ai-model'); if (am) am.value = (ac && ac.model) ? ac.model : 'deepseek-v4-flash';
-    // Language
     try { const savedLang = await invoke('get_setting', { key: 'language' });
       if (savedLang) { lang = savedLang; }
     } catch(e) {}
     if ($.langSelect) $.langSelect.value = lang;
-    // Shortcut
     try { const sc = await invoke('get_shortcut', {});
-      const si = document.getElementById('shortcut-input'); if (si) si.value = sc;
+      if ($.btnRecordShortcut) $.btnRecordShortcut.textContent = sc;
     } catch(e) {}
   } catch (e) {}
-  if ($.modalSettings) $.modalSettings.classList.remove('hidden');
+  // Show settings panel
+  if ($.settingsPanel) $.settingsPanel.classList.remove('hidden');
+}
+
+function closeSettings() {
+  switchTab('timeline');
 }
 
 async function saveSettings() {
@@ -667,7 +681,6 @@ async function saveSettings() {
       endpoint: (document.getElementById('ai-endpoint') || {}).value || null,
       model: (document.getElementById('ai-model') || {}).value || null,
     });
-    // Save language
     if ($.langSelect) {
       const newLang = $.langSelect.value;
       if (newLang !== lang) {
@@ -676,16 +689,35 @@ async function saveSettings() {
         applyLang();
       }
     }
-    // Shortcut
-    const si = document.getElementById('shortcut-input');
-    if (si && si.value.trim()) {
-      try { await invoke('change_shortcut', { shortcut: si.value.trim() }); } catch(e) {
-        toast('Shortcut: ' + e, true);
-      }
-    }
-    if ($.modalSettings) $.modalSettings.classList.add('hidden');
+    // Shortcut saved via change_shortcut during recording
+    closeSettings();
     toast(t('settingsSaved'));
   } catch (e) { toast(t('settingsSaveFailed') + e, true); }
+}
+
+// Shortcut recording
+let recordingShortcut = false;
+function startRecordShortcut() {
+  if (recordingShortcut) return;
+  recordingShortcut = true;
+  const btn = $.btnRecordShortcut;
+  if (!btn) return;
+  btn.textContent = lang === 'zh' ? '请按键...' : 'Press keys...';
+  btn.style.background = 'var(--accent-bg)';
+  btn.style.borderColor = 'var(--accent)';
+}
+
+function finishRecordShortcut(keys) {
+  recordingShortcut = false;
+  const btn = $.btnRecordShortcut;
+  if (!btn) return;
+  btn.textContent = keys;
+  btn.style.background = '';
+  btn.style.borderColor = '';
+  // Save immediately
+  invoke('change_shortcut', { shortcut: keys }).then(() => {
+    toast(lang === 'zh' ? '快捷键已更新' : 'Shortcut updated');
+  }).catch(e => toast('' + e, true));
 }
 
 // === Events ===
@@ -698,10 +730,13 @@ function setupEvents() {
   on($.btnSend, 'click', handleSubmit);
   on($.btnExpand, 'click', toggleView);
   on($.btnSync, 'click', handleSync);
-  on($.btnSettings, 'click', openSettings);
-  on($.btnSettingsCancel, 'click', () => { if ($.modalSettings) $.modalSettings.classList.add('hidden'); });
+  on($.btnSettings, 'click', () => {
+    if (state.view === 'compact') switchToFull();
+    switchTab('settings');
+  });
+  on($.btnRecordShortcut, 'click', startRecordShortcut);
   on($.btnSettingsSave, 'click', saveSettings);
-  on(document.querySelector('#modal-settings .modal-backdrop'), 'click', () => { if ($.modalSettings) $.modalSettings.classList.add('hidden'); });
+  on($.btnSettingsClose, 'click', closeSettings);
 
   on($.btnRewriteCancel, 'click', () => {
     if ($.modalRewrite) $.modalRewrite.classList.add('hidden');
@@ -749,6 +784,14 @@ function setupEvents() {
   });
 
   on($.todoList, 'change', (e) => { if (e.target.type === 'checkbox') handleToggleDone(parseInt(e.target.dataset.id)); });
+  on($.todoList, 'click', (e) => {
+    if (e.target.classList.contains('todo-delete')) { handleDelete(parseInt(e.target.dataset.id)); }
+  });
+
+  // Tab navigation
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    on(tab, 'click', () => switchTab(tab.dataset.tab));
+  });
 
   let searchTimer;
   on($.searchInput, 'input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.searchQuery = $.searchInput ? $.searchInput.value : ''; loadAndRender(); }, 200); });
@@ -762,12 +805,47 @@ function setupEvents() {
   });
 
   document.addEventListener('keydown', (e) => {
+    // Shortcut recording: capture key combo
+    if (recordingShortcut) {
+      e.preventDefault(); e.stopPropagation();
+      const parts = [];
+      if (e.ctrlKey) parts.push('Ctrl');
+      if (e.altKey) parts.push('Alt');
+      if (e.shiftKey) parts.push('Shift');
+      if (e.metaKey) parts.push('Meta');
+      const key = e.key;
+      if (key === 'Control' || key === 'Alt' || key === 'Shift' || key === 'Meta') return;
+      let keyName = key.length === 1 ? key.toUpperCase() : key;
+      if (key === ' ') keyName = 'Space';
+      parts.push(keyName);
+      finishRecordShortcut(parts.join('+'));
+      return;
+    }
     if (e.key === 'Escape') {
       if ($.modalRewrite && !$.modalRewrite.classList.contains('hidden')) { $.modalRewrite.classList.add('hidden'); state.rewriteIdeaId = null; state.selectedSuggestedTags.clear(); }
-      else if ($.modalSettings && !$.modalSettings.classList.contains('hidden')) { $.modalSettings.classList.add('hidden'); }
+      else if ($.settingsPanel && !$.settingsPanel.classList.contains('hidden')) { closeSettings(); }
       else if ($.modalTags && !$.modalTags.classList.contains('hidden')) { $.modalTags.classList.add('hidden'); }
     }
   });
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+    t.style.borderBottomColor = t.dataset.tab === tab ? 'var(--accent)' : 'transparent';
+    t.style.color = t.dataset.tab === tab ? 'var(--text)' : 'var(--text-dim)';
+  });
+  const showSettings = tab === 'settings';
+  const showTodos = tab === 'todos';
+  const showTimeline = tab === 'timeline';
+  if ($.settingsPanel) $.settingsPanel.classList.toggle('hidden', !showSettings);
+  if ($.todoSection) $.todoSection.classList.toggle('hidden', !showTodos);
+  if ($.timeline) $.timeline.classList.toggle('hidden', !showTimeline);
+  if ($.filterBar) $.filterBar.classList.toggle('hidden', !showTimeline);
+  if ($.emptyState) $.emptyState.classList.toggle('hidden', !showTimeline || state.ideas.length > 0);
+  if (showSettings) openSettings();
+  else if (showTodos) { loadIdeas().then(() => renderTodos()); }
+  else if (showTimeline) loadAndRender();
 }
 
 // === Init ===
