@@ -424,21 +424,102 @@ pub fn get_data_dir(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub fn take_screenshot(app: tauri::AppHandle) -> Result<String, String> {
-    use screenshots::Screen;
+pub fn get_screenshot_shortcut(db: State<Database>) -> Result<String, String> {
+    Ok(db
+        .get_setting("screenshot_shortcut")
+        .unwrap_or(None)
+        .unwrap_or_else(|| "Ctrl+Shift+S".to_string()))
+}
 
-    let screens = Screen::all().map_err(|e| format!("{}", e))?;
-    let screen = screens.first().ok_or("No screen found")?;
+#[tauri::command]
+pub fn change_screenshot_shortcut(
+    shortcut: String,
+    app: tauri::AppHandle,
+    db: State<Database>,
+) -> Result<String, String> {
+    let new_shortcut = shortcut.trim().to_string();
+    if new_shortcut.is_empty() {
+        return Err("Shortcut cannot be empty".into());
+    }
+    let current = db
+        .get_setting("screenshot_shortcut")
+        .unwrap_or(None)
+        .unwrap_or_else(|| "Ctrl+Shift+S".to_string());
+    app.global_shortcut().unregister(current.as_str()).ok();
+    app.global_shortcut()
+        .register(new_shortcut.as_str())
+        .map_err(|e| format!("Register: {}", e))?;
+    db.save_setting("screenshot_shortcut", &new_shortcut)?;
+    Ok(new_shortcut)
+}
 
-    let image = screen.capture().map_err(|e| format!("Capture: {}", e))?;
-
+#[tauri::command]
+pub fn take_screenshot(
+    x: i32, y: i32, width: i32, height: i32,
+    app: tauri::AppHandle,
+    db: State<Database>,
+) -> Result<String, String> {
     let app_dir = app.path().app_data_dir().map_err(|e| format!("{}", e))?;
-    std::fs::create_dir_all(&app_dir).ok();
-
+    let screenshots_dir = app_dir.join("screenshots");
+    std::fs::create_dir_all(&screenshots_dir).ok();
     let timestamp = chrono::Utc::now().format("%Y%m%d_%H%M%S");
     let filename = format!("screenshot_{}.png", timestamp);
-    let filepath = app_dir.join(&filename);
+    let filepath = screenshots_dir.join(&filename);
 
-    image.save(&filepath).map_err(|e| format!("Save: {}", e))?;
-    Ok(filepath.to_string_lossy().to_string())
+    #[cfg(target_os = "windows")]
+    {
+        let ps_script = format!(
+            r#"Add-Type -AssemblyName System.Windows.Forms,System.Drawing;
+$bmp = New-Object System.Drawing.Bitmap({w}, {h});
+$g = [System.Drawing.Graphics]::FromImage($bmp);
+$g.CopyFromScreen({x}, {y}, 0, 0, $bmp.Size);
+$bmp.Save('{path}');
+$g.Dispose(); $bmp.Dispose()"#,
+            x = x, y = y, w = width, h = height,
+            path = filepath.to_string_lossy().replace('\\', "\\\\")
+        );
+        let output = std::process::Command::new("powershell")
+            .args(["-NoProfile", "-Command", &ps_script])
+            .output()
+            .map_err(|e| format!("PowerShell: {}", e))?;
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            return Err(format!("Screenshot failed: {}", stderr));
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let output = std::process::Command::new("screencapture")
+            .args(["-R", &format!("{},{},{},{}", x, y, width, height), &filepath.to_string_lossy()])
+            .output()
+            .map_err(|e| format!("screencapture: {}", e))?;
+        if !output.status.success() {
+            return Err("screencapture failed".into());
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        // Try import (ImageMagick) first, then fall back to xdg-screenshot
+        let result = std::process::Command::new("import")
+            .args(["-window", "root", "-crop", &format!("{}x{}+{}+{}", width, height, x, y),
+                   &filepath.to_string_lossy()])
+            .output();
+        if result.is_err() || !result.unwrap().status.success() {
+            // Fallback: use gnome-screenshot
+            let output = std::process::Command::new("gnome-screenshot")
+                .args(["-f", &filepath.to_string_lossy()])
+                .output()
+                .map_err(|e| format!("gnome-screenshot: {}", e))?;
+            if !output.status.success() {
+                return Err("No screenshot tool available (install imagemagick or gnome-screenshot)".into());
+            }
+        }
+    }
+
+    let path_str = filepath.to_string_lossy().replace('\\', "/");
+    let markdown = format!("![]({})", path_str);
+    let idea = db.add_idea(&markdown)?;
+    Ok(serde_json::to_string(&idea).unwrap_or_default())
 }

@@ -1,4 +1,3 @@
-use chrono::Utc;
 use mouse_position::mouse_position::Mouse;
 use std::sync::Mutex;
 use tauri::{
@@ -23,32 +22,13 @@ pub fn run() {
                 .with_handler(|app, shortcut, event| {
                     if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
                         let shortcut_str = shortcut.to_string();
-                        // Screenshot shortcut (Ctrl+Shift+S)
+                        // Screenshot shortcut
                         if shortcut_str.contains('S') && !shortcut_str.contains("Shift+I") {
-                            let db = app.state::<db::Database>();
-                            let app_dir = app.path().app_data_dir().unwrap_or_default();
-                            let screenshots_dir = app_dir.join("screenshots");
-                            std::fs::create_dir_all(&screenshots_dir).ok();
-                            let timestamp = Utc::now().format("%Y%m%d_%H%M%S");
-                            let filename = format!("screenshot_{}.png", timestamp);
-                            let filepath = screenshots_dir.join(&filename);
-                            let result = (|| -> Result<(), String> {
-                                let screens = screenshots::Screen::all().map_err(|e| format!("Screen: {}", e))?;
-                                let screen = screens.first().ok_or("No screen")?;
-                                let image = screen.capture().map_err(|e| format!("Capture: {}", e))?;
-                                image.save(&filepath).map_err(|e| format!("Save: {}", e))?;
-                                Ok(())
-                            })();
-                            if result.is_ok() {
-                                let path_str = filepath.to_string_lossy().replace('\\', "/");
-                                let markdown = format!("![]({})", path_str);
-                                if let Ok(idea) = db.add_idea(&markdown) {
-                                    if let Some(window) = app.get_webview_window("main") {
-                                        let _ = window.emit("screenshot-saved", serde_json::json!({"id": idea.id, "path": path_str}));
-                                        let _ = window.show();
-                                        let _ = window.set_focus();
-                                    }
-                                }
+                            if let Some(window) = app.get_webview_window("main") {
+                                let _ = window.unminimize();
+                                let _ = window.show();
+                                let _ = window.set_focus();
+                                let _ = window.emit("start-screenshot", ());
                             }
                             return;
                         }
@@ -126,9 +106,13 @@ pub fn run() {
                 .register(shortcut.as_str())
                 .expect("global shortcut should register");
 
-            // Screenshot shortcut
+            // Screenshot shortcut (load saved or default)
+            let ss_shortcut = db
+                .get_setting("screenshot_shortcut")
+                .unwrap_or(None)
+                .unwrap_or_else(|| "Ctrl+Shift+S".to_string());
             app.global_shortcut()
-                .register("Ctrl+Shift+S")
+                .register(ss_shortcut.as_str())
                 .expect("screenshot shortcut should register");
 
             app.manage(db);
@@ -208,6 +192,8 @@ pub fn run() {
             commands::set_data_dir,
             commands::get_data_dir,
             commands::take_screenshot,
+            commands::get_screenshot_shortcut,
+            commands::change_screenshot_shortcut,
         ])
         .run(tauri::generate_context!())
         .expect("error running tauri application");

@@ -245,7 +245,7 @@ body {
       </div>
       <div class="row">
         <span data-i18n="screenshotShortcut">截图</span>
-        <span class="key-badge">Ctrl+Shift+S</span>
+        <button id="btn-record-ss-shortcut" class="key-btn">Ctrl+Shift+S</button>
       </div>
     </div>
 
@@ -340,6 +340,12 @@ body {
   </div>
 </div>
 
+<!-- Screenshot overlay -->
+<div id="screenshot-overlay" class="hidden" style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.25);cursor:crosshair;">
+  <div id="screenshot-selection" style="position:absolute;border:2px dashed #fff;background:rgba(255,255,255,0.08);display:none;"></div>
+  <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;" data-i18n="screenshotHint">拖拽选择截图区域，Esc 取消</div>
+</div>
+
 <div id="toast"></div>
 </div>
 
@@ -366,7 +372,7 @@ const L = {
     addTag: '添加标签', newTagPlaceholder: '或输入新标签名...', add: '添加', close: '关闭',
     tagBtn: '+标签', aiBtn: 'AI', todoBtn: '待办', deleteBtn: '×',
     justNow: '刚刚', m: '分钟前', h: '小时前', d: '天前',
-    deleteConfirm: '确定删除这条想法？', saveFailed: '保存失败：',
+    deleteConfirm: '确定删除这条想法？', unTodo: '移出待办', saveFailed: '保存失败：',
     deleteFailed: '删除失败：', syncFailed: '同步失败：',
     syncing: '同步中...', synced: '同步完成：', up: '上传', down: '下载',
     aiFailed: 'AI 功能失败：', rewriteFailed: '应用失败：',
@@ -377,6 +383,7 @@ const L = {
     autostart: '开机自启', autostartDesc: '系统启动时自动运行',
     dataDir: '数据目录', dataDirDesc: '自定义数据库存储路径（留空使用默认，修改后需重启）',
     captureShortcut: '捕捉：', screenshotShortcut: '截图：',
+    screenshotHint: '拖拽选择截图区域，Esc 取消',
   },
   en: {
     brand: 'Inspiration', expand: 'Toggle full view', sync: 'Sync', settings: 'Settings',
@@ -395,7 +402,7 @@ const L = {
     addTag: 'Add Tag', newTagPlaceholder: 'Or type a new tag name...', add: 'Add', close: 'Close',
     tagBtn: '+Tag', aiBtn: 'AI', todoBtn: 'Todo', deleteBtn: '×',
     justNow: 'just now', m: 'm ago', h: 'h ago', d: 'd ago',
-    deleteConfirm: 'Delete this idea?', saveFailed: 'Save failed: ',
+    deleteConfirm: 'Delete this idea?', unTodo: 'Remove from todos', saveFailed: 'Save failed: ',
     deleteFailed: 'Delete failed: ', syncFailed: 'Sync failed: ',
     syncing: 'Syncing...', synced: 'Synced: ', up: 'up', down: 'down',
     aiFailed: 'AI tools failed: ', rewriteFailed: 'Failed: ',
@@ -406,6 +413,7 @@ const L = {
     autostart: 'Auto-start', autostartDesc: 'Run on system startup',
     dataDir: 'Data Directory', dataDirDesc: 'Custom DB path (empty = default, restart required)',
     captureShortcut: 'Capture:', screenshotShortcut: 'Screenshot:',
+    screenshotHint: 'Drag to select area, Esc to cancel',
   }
 };
 
@@ -488,7 +496,7 @@ function cacheDom() {
     'btn-rewrite-cancel', 'btn-rewrite-apply',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
     'lang-select', 'settings-panel', 'btn-settings-save',
-    'btn-record-shortcut', 'autostart-check', 'data-dir-input',
+    'btn-record-shortcut', 'btn-record-ss-shortcut', 'autostart-check', 'data-dir-input',
   ];
   for (const id of ids) {
     const el = document.getElementById(id);
@@ -573,7 +581,7 @@ function renderTodos() {
     return `<div class="todo-item ${cls}">
       <input type="checkbox" data-id="${i.id}" ${i.todo_done ? 'checked' : ''}>
       <span class="todo-text">${escHtml(trunc(i.content, 80))}</span>
-      <button class="todo-delete" data-id="${i.id}" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:4px;padding:1px 6px;cursor:pointer;font-size:11px;color:var(--text-dim);" title="${t('deleteBtn')}">${t('deleteBtn')}</button>
+      <button class="todo-delete" data-id="${i.id}" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:4px;padding:1px 6px;cursor:pointer;font-size:11px;color:var(--text-dim);" title="${t('unTodo')}">&#10005;</button>
     </div>`;
   }).join('');
 }
@@ -642,6 +650,10 @@ async function handleDelete(id) {
   if (!confirm(t('deleteConfirm'))) return;
   try { await invoke('delete_idea', { id }); state.ideas = state.ideas.filter(i => i.id !== id); renderFullView(); }
   catch (e) { toast(t('deleteFailed') + e, true); }
+}
+async function handleUnTodo(id) {
+  try { await invoke('toggle_todo', { id }); await loadIdeas(); renderFullView(); }
+  catch (e) { toast(t('rewriteFailed') + e, true); }
 }
 async function handleToggleTodo(id) {
   try { const idea = await invoke('toggle_todo', { id }); const idx = state.ideas.findIndex(i => i.id === id); if (idx >= 0) state.ideas[idx] = idea; renderFullView(); }
@@ -753,6 +765,9 @@ async function openSettings() {
     try { const sc = await invoke('get_shortcut', {});
       if ($.btnRecordShortcut) $.btnRecordShortcut.textContent = sc;
     } catch(e) {}
+    try { const sc = await invoke('get_screenshot_shortcut', {});
+      if ($.btnRecordSsShortcut) $.btnRecordSsShortcut.textContent = sc;
+    } catch(e) {}
     // Autostart
     try { const as = await invoke('get_autostart', {});
       if ($.autostartCheck) $.autostartCheck.checked = as;
@@ -807,10 +822,13 @@ async function saveSettings() {
 
 // Shortcut recording
 let recordingShortcut = false;
-function startRecordShortcut() {
+let recordingTarget = null; // 'capture' or 'screenshot'
+
+function startRecordShortcut(target) {
   if (recordingShortcut) return;
   recordingShortcut = true;
-  const btn = $.btnRecordShortcut;
+  recordingTarget = target;
+  const btn = target === 'capture' ? $.btnRecordShortcut : $.btnRecordSsShortcut;
   if (!btn) return;
   btn.textContent = lang === 'zh' ? '请按键...' : 'Press keys...';
   btn.style.background = 'var(--accent-bg)';
@@ -819,13 +837,15 @@ function startRecordShortcut() {
 
 function finishRecordShortcut(keys) {
   recordingShortcut = false;
-  const btn = $.btnRecordShortcut;
+  const target = recordingTarget;
+  recordingTarget = null;
+  const btn = target === 'capture' ? $.btnRecordShortcut : $.btnRecordSsShortcut;
   if (!btn) return;
   btn.textContent = keys;
   btn.style.background = '';
   btn.style.borderColor = '';
-  // Save immediately
-  invoke('change_shortcut', { shortcut: keys }).then(() => {
+  const cmd = target === 'capture' ? 'change_shortcut' : 'change_screenshot_shortcut';
+  invoke(cmd, { shortcut: keys }).then(() => {
     toast(lang === 'zh' ? '快捷键已更新' : 'Shortcut updated');
   }).catch(e => toast('' + e, true));
 }
@@ -844,7 +864,8 @@ function setupEvents() {
     if (state.view === 'compact') switchToFull();
     switchTab('settings');
   });
-  on($.btnRecordShortcut, 'click', startRecordShortcut);
+  on($.btnRecordShortcut, 'click', () => startRecordShortcut('capture'));
+  on($.btnRecordSsShortcut, 'click', () => startRecordShortcut('screenshot'));
   on($.btnSettingsSave, 'click', saveSettings);
 
   on($.btnRewriteCancel, 'click', () => {
@@ -894,7 +915,7 @@ function setupEvents() {
 
   on($.todoList, 'change', (e) => { if (e.target.type === 'checkbox') handleToggleDone(parseInt(e.target.dataset.id)); });
   on($.todoList, 'click', (e) => {
-    if (e.target.classList.contains('todo-delete')) { handleDelete(parseInt(e.target.dataset.id)); }
+    if (e.target.classList.contains('todo-delete')) { handleUnTodo(parseInt(e.target.dataset.id)); }
   });
 
   // Tab navigation
@@ -976,11 +997,66 @@ async function init() {
 
   try { await loadTags(); } catch (e) {}
 
-  // Listen for screenshot-saved event
+  // Screenshot overlay
+  const ssOverlay = document.getElementById('screenshot-overlay');
+  const ssSelection = document.getElementById('screenshot-selection');
+  let ssStartX, ssStartY, ssDragging = false;
+
+  if (ssOverlay) {
+    ssOverlay.addEventListener('mousedown', (e) => {
+      ssDragging = true;
+      ssStartX = e.clientX; ssStartY = e.clientY;
+      ssSelection.style.display = 'block';
+      ssSelection.style.left = ssStartX + 'px';
+      ssSelection.style.top = ssStartY + 'px';
+      ssSelection.style.width = '0px';
+      ssSelection.style.height = '0px';
+    });
+    ssOverlay.addEventListener('mousemove', (e) => {
+      if (!ssDragging) return;
+      const x = Math.min(ssStartX, e.clientX);
+      const y = Math.min(ssStartY, e.clientY);
+      const w = Math.abs(e.clientX - ssStartX);
+      const h = Math.abs(e.clientY - ssStartY);
+      ssSelection.style.left = x + 'px';
+      ssSelection.style.top = y + 'px';
+      ssSelection.style.width = w + 'px';
+      ssSelection.style.height = h + 'px';
+    });
+    ssOverlay.addEventListener('mouseup', async (e) => {
+      if (!ssDragging) return;
+      ssDragging = false;
+      ssOverlay.classList.add('hidden');
+      ssSelection.style.display = 'none';
+      const x = Math.min(ssStartX, e.clientX);
+      const y = Math.min(ssStartY, e.clientY);
+      const w = Math.abs(e.clientX - ssStartX);
+      const h = Math.abs(e.clientY - ssStartY);
+      if (w < 10 || h < 10) { toast('Selection too small', true); return; }
+      try {
+        await invoke('take_screenshot', { x: Math.round(x), y: Math.round(y),
+          width: Math.round(w), height: Math.round(h) });
+        switchToFull();
+        await loadIdeas();
+        renderFullView();
+        toast('Screenshot saved');
+      } catch (e) { toast('Screenshot failed: ' + e, true); }
+    });
+  }
+
+  // Show overlay when Rust emits screenshot-start event
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && ssOverlay && !ssOverlay.classList.contains('hidden')) {
+      ssOverlay.classList.add('hidden');
+      ssSelection.style.display = 'none';
+      ssDragging = false;
+    }
+  });
+
+  // Listen for screenshot events
   try {
-    await listen('screenshot-saved', () => {
-      switchToFull();
-      loadAndRender();
+    await listen('start-screenshot', () => {
+      if (ssOverlay) ssOverlay.classList.remove('hidden');
     });
   } catch (e) {}
 
