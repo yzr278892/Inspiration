@@ -434,6 +434,7 @@ impl Database {
         Ok(result)
     }
 
+    #[allow(dead_code)]
     pub fn insert_idea_tag(&self, idea_id: i64, tag_id: i64) -> Result<(), String> {
         let conn = self.conn.lock().map_err(|e| format!("Lock: {}", e))?;
         conn.execute(
