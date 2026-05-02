@@ -216,7 +216,7 @@ body {
       <legend data-i18n="aiConfig">AI 润色 (OpenAI 兼容 API)</legend>
       <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
       <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com/v1/chat/completions"></label>
-      <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-chat"></label>
+      <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-v4-flash"></label>
     </fieldset>
     <div class="modal-actions">
       <button id="btn-settings-cancel" data-i18n="cancel">取消</button>
@@ -619,7 +619,7 @@ async function openSettings() {
     const ac = await invoke('get_ai_config', {});
     const ak = document.getElementById('ai-key'); if (ak) ak.value = ac ? ac.api_key : '';
     const ae = document.getElementById('ai-endpoint'); if (ae) ae.value = (ac && ac.endpoint) ? ac.endpoint : 'https://api.deepseek.com/v1/chat/completions';
-    const am = document.getElementById('ai-model'); if (am) am.value = (ac && ac.model) ? ac.model : 'deepseek-chat';
+    const am = document.getElementById('ai-model'); if (am) am.value = (ac && ac.model) ? ac.model : 'deepseek-v4-flash';
     // Language
     try { const savedLang = await invoke('get_setting', { key: 'language' });
       if (savedLang) { lang = savedLang; }

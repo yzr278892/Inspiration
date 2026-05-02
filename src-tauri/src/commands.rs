@@ -107,7 +107,7 @@ fn get_ai_config_from_db(db: &Database) -> Result<AIConfig, String> {
         .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
     let model = db
         .get_setting("ai_model")?
-        .unwrap_or_else(|| "deepseek-chat".into());
+        .unwrap_or_else(|| "deepseek-v4-flash".into());
     Ok(AIConfig {
         api_key,
         endpoint,
@@ -224,7 +224,7 @@ pub fn get_ai_config(db: State<Database>) -> Result<Option<AIConfig>, String> {
                 .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
             let model = db
                 .get_setting("ai_model")?
-                .unwrap_or_else(|| "deepseek-chat".into());
+                .unwrap_or_else(|| "deepseek-v4-flash".into());
             Ok(Some(AIConfig {
                 api_key: key,
                 endpoint,
