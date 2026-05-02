@@ -315,3 +315,130 @@ pub fn get_shortcut(db: State<Database>) -> Result<String, String> {
 pub fn get_setting(key: String, db: State<Database>) -> Result<Option<String>, String> {
     db.get_setting(&key)
 }
+
+#[tauri::command]
+pub fn get_autostart(db: State<Database>) -> Result<bool, String> {
+    Ok(db.get_setting("autostart")?.unwrap_or_else(|| "false".into()) == "true")
+}
+
+#[tauri::command]
+pub fn set_autostart(enabled: bool, app: tauri::AppHandle) -> Result<bool, String> {
+    let exe_path = std::env::current_exe().map_err(|e| format!("{}", e))?;
+    let exe_str = exe_path.to_string_lossy().to_string();
+
+    #[cfg(target_os = "windows")]
+    {
+        use std::process::Command;
+        if enabled {
+            let output = Command::new("reg")
+                .args(["add", r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+                       "/v", "Inspiration", "/t", "REG_SZ",
+                       "/d", &exe_str, "/f"])
+                .output().map_err(|e| format!("reg add: {}", e))?;
+            if !output.status.success() {
+                return Err(format!("reg add failed: {:?}", output));
+            }
+        } else {
+            let output = Command::new("reg")
+                .args(["delete", r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+                       "/v", "Inspiration", "/f"])
+                .output().map_err(|e| format!("reg delete: {}", e))?;
+            if !output.status.success() {
+                // Ignore if key doesn't exist
+            }
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".into());
+        let autostart_dir = std::path::PathBuf::from(home).join(".config/autostart");
+        std::fs::create_dir_all(&autostart_dir).ok();
+        let desktop_file = autostart_dir.join("inspiration.desktop");
+        if enabled {
+            let content = format!(
+                "[Desktop Entry]\nType=Application\nName=Inspiration\nExec={}\nX-GNOME-Autostart-enabled=true\n",
+                exe_str
+            );
+            std::fs::write(&desktop_file, content).map_err(|e| format!("{}", e))?;
+        } else {
+            std::fs::remove_file(&desktop_file).ok();
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".into());
+        let launch_agents = std::path::PathBuf::from(home).join("Library/LaunchAgents");
+        std::fs::create_dir_all(&launch_agents).ok();
+        let plist = launch_agents.join("com.inspiration.app.plist");
+        if enabled {
+            let content = format!(
+                r#"<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>Label</key><string>com.inspiration.app</string>
+<key>ProgramArguments</key><array><string>{}</string></array>
+<key>RunAtLoad</key><true/>
+</dict></plist>"#,
+                exe_str
+            );
+            std::fs::write(&plist, content).map_err(|e| format!("{}", e))?;
+        } else {
+            std::fs::remove_file(&plist).ok();
+        }
+    }
+
+    let _ = app; // Keep for future use
+    Ok(enabled)
+}
+
+#[tauri::command]
+pub fn set_data_dir(path: String, app: tauri::AppHandle) -> Result<(), String> {
+    let clean = path.trim().to_string();
+    let app_dir = app.path().app_data_dir().map_err(|e| format!("{}", e))?;
+    let config_file = app_dir.join("db_path.txt");
+
+    if clean.is_empty() {
+        std::fs::remove_file(&config_file).ok();
+        return Ok(());
+    }
+    let p = std::path::Path::new(&clean);
+    if p.exists() && !p.is_dir() {
+        return Err("Path exists but is not a directory".into());
+    }
+    std::fs::create_dir_all(p).map_err(|e| format!("{}", e))?;
+    std::fs::write(&config_file, &clean).map_err(|e| format!("{}", e))?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_data_dir(app: tauri::AppHandle) -> Result<String, String> {
+    let app_dir = app.path().app_data_dir().map_err(|e| format!("{}", e))?;
+    let config_file = app_dir.join("db_path.txt");
+    if let Ok(contents) = std::fs::read_to_string(&config_file) {
+        Ok(contents.trim().to_string())
+    } else {
+        Ok(String::new())
+    }
+}
+
+#[tauri::command]
+pub fn take_screenshot(app: tauri::AppHandle) -> Result<String, String> {
+    use screenshots::Screen;
+
+    let screens = Screen::all().map_err(|e| format!("{}", e))?;
+    let screen = screens.first().ok_or("No screen found")?;
+
+    let image = screen.capture().map_err(|e| format!("Capture: {}", e))?;
+
+    let app_dir = app.path().app_data_dir().map_err(|e| format!("{}", e))?;
+    std::fs::create_dir_all(&app_dir).ok();
+
+    let timestamp = chrono::Utc::now().format("%Y%m%d_%H%M%S");
+    let filename = format!("screenshot_{}.png", timestamp);
+    let filepath = app_dir.join(&filename);
+
+    image.save(&filepath).map_err(|e| format!("Save: {}", e))?;
+    Ok(filepath.to_string_lossy().to_string())
+}

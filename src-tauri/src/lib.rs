@@ -1,3 +1,4 @@
+use chrono::Utc;
 use mouse_position::mouse_position::Mouse;
 use std::sync::Mutex;
 use tauri::{
@@ -19,8 +20,33 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_handler(|app, _shortcut, event| {
+                .with_handler(|app, shortcut, event| {
                     if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
+                        let shortcut_str = shortcut.to_string();
+                        // Screenshot shortcut
+                        if shortcut_str.contains('S') && !shortcut_str.contains("Shift+I") {
+                            let db = app.state::<db::Database>();
+                            let app_dir = app.path().app_data_dir().unwrap_or_default();
+                            std::fs::create_dir_all(&app_dir).ok();
+                            let timestamp = Utc::now().format("%Y%m%d_%H%M%S");
+                            let filename = format!("screenshot_{}.png", timestamp);
+                            let filepath = app_dir.join(&filename);
+                            if let Ok(screens) = screenshots::Screen::all() {
+                                if let Some(screen) = screens.first() {
+                                    if let Ok(image) = screen.capture() {
+                                        if image.save(&filepath).is_ok() {
+                                            let markdown = format!("![]({})", filepath.to_string_lossy());
+                                            if let Ok(idea) = db.add_idea(&markdown) {
+                                                if let Some(window) = app.get_webview_window("main") {
+                                                    let _ = window.emit("screenshot-saved", serde_json::json!(idea));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            return;
+                        }
                         if let Some(window) = app.get_webview_window("main") {
                             let pos = Mouse::get_mouse_position();
                             match pos {
@@ -59,7 +85,25 @@ pub fn run() {
         .setup(|app| {
             let app_dir = app.path().app_data_dir().expect("app data dir should exist");
             std::fs::create_dir_all(&app_dir).ok();
-            let db = db::Database::init(app_dir.join("inspiration.db"))
+
+            // Check for custom data directory
+            let db_path = {
+                let config_file = app_dir.join("db_path.txt");
+                if let Ok(contents) = std::fs::read_to_string(&config_file) {
+                    let custom = contents.trim().to_string();
+                    if !custom.is_empty() {
+                        let p = std::path::PathBuf::from(&custom);
+                        std::fs::create_dir_all(&p).ok();
+                        p.join("inspiration.db")
+                    } else {
+                        app_dir.join("inspiration.db")
+                    }
+                } else {
+                    app_dir.join("inspiration.db")
+                }
+            };
+
+            let db = db::Database::init(db_path)
                 .expect("database should initialize");
 
             // Load saved shortcut or default
@@ -75,6 +119,11 @@ pub fn run() {
             app.global_shortcut()
                 .register(shortcut.as_str())
                 .expect("global shortcut should register");
+
+            // Screenshot shortcut
+            app.global_shortcut()
+                .register("Ctrl+Shift+S")
+                .expect("screenshot shortcut should register");
 
             app.manage(db);
 
@@ -148,6 +197,11 @@ pub fn run() {
             commands::get_setting,
             commands::change_shortcut,
             commands::get_shortcut,
+            commands::get_autostart,
+            commands::set_autostart,
+            commands::set_data_dir,
+            commands::get_data_dir,
+            commands::take_screenshot,
         ])
         .run(tauri::generate_context!())
         .expect("error running tauri application");

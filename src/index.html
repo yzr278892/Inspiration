@@ -179,7 +179,26 @@ body {
       </fieldset>
       <fieldset>
         <legend data-i18n="shortcutLabel">快捷键</legend>
-        <label><button id="btn-record-shortcut" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);font-size:13px;min-width:160px;text-align:center;">Ctrl+Shift+I</button></label>
+        <label style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span data-i18n="captureShortcut" style="font-size:12px;color:var(--text-dim);">捕捉：</span>
+          <button id="btn-record-shortcut" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);font-size:13px;min-width:160px;text-align:center;">Ctrl+Shift+I</button>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <span data-i18n="screenshotShortcut" style="font-size:12px;color:var(--text-dim);">截图：</span>
+          <span style="font-size:13px;color:var(--text);font-weight:600;">Ctrl+Shift+S</span>
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="autostart">开机自启</legend>
+        <label style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="autostart-check" style="width:auto;">
+          <span data-i18n="autostartDesc" style="font-size:13px;">系统启动时自动运行</span>
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend data-i18n="dataDir">数据目录</legend>
+        <label data-i18n="dataDirDesc">自定义数据库存储路径（留空使用默认，修改后需重启）</label>
+        <label><input type="text" id="data-dir-input" placeholder="留空使用默认"></label>
       </fieldset>
       <fieldset>
         <legend data-i18n="webdavSync">WebDAV 同步</legend>
@@ -287,6 +306,9 @@ const L = {
     settingsSaved: '设置已保存', settingsSaveFailed: '保存设置失败：',
     loadFail: '加载失败：', shortcutLabel: '快捷键',
     navTimeline: '时间流', navTodos: '待办', navSettings: '设置',
+    autostart: '开机自启', autostartDesc: '系统启动时自动运行',
+    dataDir: '数据目录', dataDirDesc: '自定义数据库存储路径（留空使用默认，修改后需重启）',
+    captureShortcut: '捕捉：', screenshotShortcut: '截图：',
   },
   en: {
     brand: 'Inspiration', expand: 'Toggle full view', sync: 'Sync', settings: 'Settings',
@@ -313,6 +335,9 @@ const L = {
     settingsSaved: 'Settings saved', settingsSaveFailed: 'Save failed: ',
     loadFail: 'Load failed: ', shortcutLabel: 'Shortcut',
     navTimeline: 'Timeline', navTodos: 'Todos', navSettings: 'Settings',
+    autostart: 'Auto-start', autostartDesc: 'Run on system startup',
+    dataDir: 'Data Directory', dataDirDesc: 'Custom DB path (empty = default, restart required)',
+    captureShortcut: 'Capture:', screenshotShortcut: 'Screenshot:',
   }
 };
 
@@ -395,7 +420,7 @@ function cacheDom() {
     'btn-rewrite-cancel', 'btn-rewrite-apply',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
     'lang-select', 'settings-panel', 'btn-settings-save', 'btn-settings-close',
-    'btn-record-shortcut',
+    'btn-record-shortcut', 'autostart-check', 'data-dir-input',
   ];
   for (const id of ids) {
     const el = document.getElementById(id);
@@ -660,6 +685,14 @@ async function openSettings() {
     try { const sc = await invoke('get_shortcut', {});
       if ($.btnRecordShortcut) $.btnRecordShortcut.textContent = sc;
     } catch(e) {}
+    // Autostart
+    try { const as = await invoke('get_autostart', {});
+      if ($.autostartCheck) $.autostartCheck.checked = as;
+    } catch(e) {}
+    // Data dir
+    try { const dd = await invoke('get_data_dir', {});
+      if ($.dataDirInput) $.dataDirInput.value = dd;
+    } catch(e) {}
   } catch (e) {}
   // Show settings panel
   if ($.settingsPanel) $.settingsPanel.classList.remove('hidden');
@@ -689,7 +722,16 @@ async function saveSettings() {
         applyLang();
       }
     }
-    // Shortcut saved via change_shortcut during recording
+    // Autostart
+    if ($.autostartCheck) {
+      try { await invoke('set_autostart', { enabled: $.autostartCheck.checked }); } catch(e) {}
+    }
+    // Data dir
+    if ($.dataDirInput) {
+      try { await invoke('set_data_dir', { path: $.dataDirInput.value.trim() }); } catch(e) {
+        toast('' + e, true);
+      }
+    }
     closeSettings();
     toast(t('settingsSaved'));
   } catch (e) { toast(t('settingsSaveFailed') + e, true); }
