@@ -105,7 +105,7 @@ fn get_ai_config_from_db(db: &Database) -> Result<AIConfig, String> {
         .ok_or("AI API key not configured")?;
     let endpoint = db
         .get_setting("ai_endpoint")?
-        .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
+        .unwrap_or_else(|| "https://api.deepseek.com".into());
     let model = db
         .get_setting("ai_model")?
         .unwrap_or_else(|| "deepseek-v4-flash".into());
@@ -118,6 +118,12 @@ fn get_ai_config_from_db(db: &Database) -> Result<AIConfig, String> {
 
 async fn call_ai_api(config: &AIConfig, content: &str, existing_tags: &[String]) -> Result<RewriteResult, String> {
     let client = reqwest::Client::new();
+
+    let endpoint = if config.endpoint.contains("/chat/completions") {
+        config.endpoint.clone()
+    } else {
+        format!("{}/v1/chat/completions", config.endpoint.trim_end_matches('/'))
+    };
 
     let prompt = format!(
         r#"Rewrite the following idea to be clearer while STRICTLY preserving the original meaning and the author's voice.
@@ -146,7 +152,7 @@ Original text:
     });
 
     let resp = client
-        .post(&config.endpoint)
+        .post(&endpoint)
         .header("Authorization", format!("Bearer {}", config.api_key))
         .header("Content-Type", "application/json")
         .json(&body)
@@ -222,7 +228,7 @@ pub fn get_ai_config(db: State<Database>) -> Result<Option<AIConfig>, String> {
         Some(key) => {
             let endpoint = db
                 .get_setting("ai_endpoint")?
-                .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
+                .unwrap_or_else(|| "https://api.deepseek.com".into());
             let model = db
                 .get_setting("ai_model")?
                 .unwrap_or_else(|| "deepseek-v4-flash".into());
