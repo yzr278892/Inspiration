@@ -1,4 +1,4 @@
-# Inspiration · 灵感捕手
+# Inspiration
 
 <p align="center">
   <img src="src-tauri/icons/128x128.png" alt="Inspiration" width="128" height="128">
@@ -24,7 +24,7 @@
 
 ## 这是什么？
 
-**Inspiration（灵感捕手）** 是一个极致轻量的桌面工具，用于在灵感闪现时瞬间捕捉它。
+**Inspiration** 是一个极致轻量的桌面工具，用于在灵感闪现时瞬间捕捉它。
 
 按下 `Ctrl+Shift+I`，一张小卡片出现在鼠标旁边——输入你的想法，回车，带时间戳保存。无需切换窗口、无需等待加载。
 
@@ -54,11 +54,11 @@
 
 从 [GitHub Releases](https://github.com/yzr278892/Inspiration/releases) 下载最新版本。
 
-| 平台 | 安装包 |
-|------|--------|
-| **Windows** | `.msi` 安装程序 |
-| **macOS** | `.dmg` 磁盘映像 |
-| **Linux** | `.deb` 包 或 `.AppImage` |
+| 平台        | 安装包                   |
+| ----------- | ------------------------ |
+| **Windows** | `.msi` 安装程序          |
+| **macOS**   | `.dmg` 磁盘映像          |
+| **Linux**   | `.deb` 包 或 `.AppImage` |
 
 ### 或从源码构建
 
@@ -134,13 +134,13 @@ Inspiration/
 
 **技术栈：**
 
-| 层 | 技术 | 用途 |
-|----|------|------|
-| 桌面壳 | [Tauri v2](https://v2.tauri.app/) | 原生窗口、全局快捷键、跨平台 |
-| 前端 | 原生 HTML/CSS/JS | 零 npm、零构建、即时加载 |
-| 本地存储 | SQLite（[rusqlite](https://github.com/rusqlite/rusqlite)） | 单文件数据库、零配置 |
-| 同步 | [reqwest](https://github.com/seanmonstar/reqwest) | WebDAV HTTP 客户端 |
-| AI | OpenAI 兼容 API | 任意模型（推荐 GPT-4o-mini） |
+| 层       | 技术                                                       | 用途                         |
+| -------- | ---------------------------------------------------------- | ---------------------------- |
+| 桌面壳   | [Tauri v2](https://v2.tauri.app/)                          | 原生窗口、全局快捷键、跨平台 |
+| 前端     | 原生 HTML/CSS/JS                                           | 零 npm、零构建、即时加载     |
+| 本地存储 | SQLite（[rusqlite](https://github.com/rusqlite/rusqlite)） | 单文件数据库、零配置         |
+| 同步     | [reqwest](https://github.com/seanmonstar/reqwest)          | WebDAV HTTP 客户端           |
+| AI       | OpenAI 兼容 API                                            | 任意模型（推荐 GPT-4o-mini） |
 
 **设计理念：**
 - **零 npm** — 无 `package.json`、无 `node_modules`、无打包器
