@@ -104,10 +104,10 @@ fn get_ai_config_from_db(db: &Database) -> Result<AIConfig, String> {
         .ok_or("AI API key not configured")?;
     let endpoint = db
         .get_setting("ai_endpoint")?
-        .unwrap_or_else(|| "https://api.openai.com/v1/chat/completions".into());
+        .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
     let model = db
         .get_setting("ai_model")?
-        .unwrap_or_else(|| "gpt-4o-mini".into());
+        .unwrap_or_else(|| "deepseek-chat".into());
     Ok(AIConfig {
         api_key,
         endpoint,
@@ -221,10 +221,10 @@ pub fn get_ai_config(db: State<Database>) -> Result<Option<AIConfig>, String> {
         Some(key) => {
             let endpoint = db
                 .get_setting("ai_endpoint")?
-                .unwrap_or_else(|| "https://api.openai.com/v1/chat/completions".into());
+                .unwrap_or_else(|| "https://api.deepseek.com/v1/chat/completions".into());
             let model = db
                 .get_setting("ai_model")?
-                .unwrap_or_else(|| "gpt-4o-mini".into());
+                .unwrap_or_else(|| "deepseek-chat".into());
             Ok(Some(AIConfig {
                 api_key: key,
                 endpoint,
@@ -265,4 +265,14 @@ pub fn hide_window(app: tauri::AppHandle) -> Result<(), String> {
         window.hide().map_err(|e| format!("{}", e))?;
     }
     Ok(())
+}
+
+#[tauri::command]
+pub fn save_setting(key: String, value: String, db: State<Database>) -> Result<(), String> {
+    db.save_setting(&key, &value)
+}
+
+#[tauri::command]
+pub fn get_setting(key: String, db: State<Database>) -> Result<Option<String>, String> {
+    db.get_setting(&key)
 }

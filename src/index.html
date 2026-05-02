@@ -6,31 +6,17 @@
 <title>Inspiration</title>
 <style>
 :root {
-  --bg: #f7f7f9;
-  --surface: #ffffff;
-  --text: #1a1a1e;
-  --text-dim: #8e8e93;
-  --accent: #4f6ef7;
-  --accent-bg: #eef1ff;
-  --border: #e5e5ea;
-  --danger: #d32f2f;
-  --danger-bg: #fdecea;
-  --success: #2e7d32;
-  --warning: #f59e0b;
-  --radius: 10px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --bg: #f7f7f9; --surface: #ffffff; --text: #1a1a1e; --text-dim: #8e8e93;
+  --accent: #4f6ef7; --accent-bg: #eef1ff; --border: #e5e5ea;
+  --danger: #d32f2f; --danger-bg: #fdecea; --success: #2e7d32; --warning: #f59e0b;
+  --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,0.07);
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --mono: "SF Mono", "Fira Code", "Cascadia Code", monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: var(--font);
-  font-size: 14px;
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-  user-select: none;
+  font-family: var(--font); font-size: 14px; background: var(--bg);
+  color: var(--text); overflow: hidden; height: 100vh; user-select: none;
 }
 #app { height: 100vh; display: flex; flex-direction: column; }
 #header {
@@ -42,46 +28,31 @@ body {
 #header-actions { display: flex; gap: 4px; -webkit-app-region: no-drag; }
 #header-actions button {
   background: none; border: 1px solid var(--border); border-radius: 6px;
-  padding: 3px 8px; font-size: 14px; cursor: pointer; color: var(--text-dim);
-  line-height: 1;
+  padding: 3px 8px; font-size: 14px; cursor: pointer; color: var(--text-dim); line-height: 1;
 }
 #header-actions button:hover { background: var(--bg); color: var(--text); }
 
-/* Compact View */
-#compact-view {
-  flex: 1; display: flex; flex-direction: column; justify-content: center;
-  padding: 20px 24px;
-}
+#compact-view { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 24px; }
 #input-area {
-  display: flex; gap: 10px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 10px 14px; box-shadow: var(--shadow); align-items: end;
+  display: flex; gap: 10px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; box-shadow: var(--shadow); align-items: end;
   max-height: 200px;
 }
 #input {
-  flex: 1; border: none; outline: none; resize: none;
-  font-family: var(--font); font-size: 15px; line-height: 1.55;
-  min-height: 24px; max-height: 160px; background: transparent;
-  user-select: text;
+  flex: 1; border: none; outline: none; resize: none; font-family: var(--font);
+  font-size: 15px; line-height: 1.55; min-height: 24px; max-height: 160px;
+  background: transparent; user-select: text;
 }
 #btn-send {
   background: var(--accent); border: none; border-radius: 6px;
-  padding: 6px 14px; font-size: 16px; cursor: pointer; color: #fff;
-  flex-shrink: 0;
+  padding: 6px 14px; font-size: 16px; cursor: pointer; color: #fff; flex-shrink: 0;
 }
 #btn-send:hover { opacity: 0.9; }
-#quick-toast {
-  text-align: center; margin-top: 10px; font-size: 12px; color: var(--success);
-  transition: opacity 0.2s;
-}
+#quick-toast { text-align: center; margin-top: 10px; font-size: 12px; color: var(--success); }
 
-/* Full View */
 #full-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-#todo-section {
-  padding: 8px 16px; background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
+#todo-section { padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
 #todo-section h3 { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
 .todo-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 13px; }
 .todo-item input[type="checkbox"] { cursor: pointer; accent-color: var(--accent); }
@@ -89,212 +60,136 @@ body {
 
 #filter-bar {
   display: flex; gap: 8px; align-items: center; padding: 8px 16px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
+  background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap;
 }
-#search-input {
-  flex: 1; min-width: 120px; border: 1px solid var(--border);
-  border-radius: 6px; padding: 5px 10px; font-size: 13px; outline: none;
-  user-select: text;
-}
+#search-input { flex: 1; min-width: 120px; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 13px; outline: none; user-select: text; }
 #search-input:focus { border-color: var(--accent); }
-#sort-select {
-  border: 1px solid var(--border); border-radius: 6px;
-  padding: 4px 8px; font-size: 12px; background: var(--surface); cursor: pointer;
-}
+#sort-select { border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 12px; background: var(--surface); cursor: pointer; }
 #tag-filters { display: flex; gap: 4px; flex-wrap: wrap; }
-.tag-pill {
-  display: inline-block; padding: 2px 10px; font-size: 11px;
-  border-radius: 12px; background: var(--bg); color: var(--text-dim);
-  cursor: pointer; border: 1px solid var(--border); white-space: nowrap;
-}
+.tag-pill { display: inline-block; padding: 2px 10px; font-size: 11px; border-radius: 12px; background: var(--bg); color: var(--text-dim); cursor: pointer; border: 1px solid var(--border); white-space: nowrap; }
 .tag-pill:hover, .tag-pill.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
 
 #timeline { flex: 1; overflow-y: auto; padding: 8px 16px 20px; }
 #empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; }
 
-/* Idea Card */
 .idea-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px;
-  border-left: 3px solid var(--accent);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 8px; border-left: 3px solid var(--accent);
 }
 .idea-card .content { font-size: 14px; line-height: 1.6; word-wrap: break-word; }
 .idea-card .content h1, .idea-card .content h2, .idea-card .content h3 { margin: 6px 0 4px; }
-.idea-card .content h1 { font-size: 16px; }
-.idea-card .content h2 { font-size: 15px; }
-.idea-card .content h3 { font-size: 14px; }
+.idea-card .content h1 { font-size: 16px; } .idea-card .content h2 { font-size: 15px; } .idea-card .content h3 { font-size: 14px; }
 .idea-card .content p { margin: 4px 0; }
-.idea-card .content ul, .idea-card .content ol { padding-left: 22px; }
-.idea-card .content li { margin: 2px 0; }
-.idea-card .content code {
-  font-family: var(--mono); font-size: 12px; background: #f0f0f5;
-  padding: 1px 5px; border-radius: 3px;
-}
-.idea-card .content pre {
-  background: #f0f0f5; border-radius: 6px; padding: 10px 12px;
-  overflow-x: auto; margin: 6px 0;
-}
+.idea-card .content ul, .idea-card .content ol { padding-left: 22px; } .idea-card .content li { margin: 2px 0; }
+.idea-card .content code { font-family: var(--mono); font-size: 12px; background: #f0f0f5; padding: 1px 5px; border-radius: 3px; }
+.idea-card .content pre { background: #f0f0f5; border-radius: 6px; padding: 10px 12px; overflow-x: auto; margin: 6px 0; }
 .idea-card .content pre code { background: none; padding: 0; }
-.idea-card .content blockquote {
-  border-left: 2px solid var(--accent); padding-left: 12px; color: var(--text-dim); margin: 6px 0;
-}
-.idea-card .content a { color: var(--accent); }
-.idea-card .content img { max-width: 100%; border-radius: 6px; }
-.idea-card .meta {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-top: 10px; font-size: 11px; color: var(--text-dim);
-}
+.idea-card .content blockquote { border-left: 2px solid var(--accent); padding-left: 12px; color: var(--text-dim); margin: 6px 0; }
+.idea-card .content a { color: var(--accent); } .idea-card .content img { max-width: 100%; border-radius: 6px; }
+.idea-card .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 11px; color: var(--text-dim); }
 .idea-card .tags { display: flex; gap: 4px; flex-wrap: wrap; }
-.idea-card .tag {
-  display: inline-block; padding: 1px 8px; font-size: 10px;
-  border-radius: 10px; background: var(--accent-bg); color: var(--accent);
-  cursor: pointer;
-}
+.idea-card .tag { display: inline-block; padding: 1px 8px; font-size: 10px; border-radius: 10px; background: var(--accent-bg); color: var(--accent); cursor: pointer; }
 .idea-card .actions { display: flex; gap: 2px; }
-.idea-card .actions button {
-  background: none; border: 1px solid var(--border); border-radius: 4px;
-  padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--text-dim);
-}
+.idea-card .actions button { background: none; border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; color: var(--text-dim); }
 .idea-card .actions button:hover { background: var(--bg); color: var(--text); }
 .idea-card .actions button.danger:hover { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
 
-/* Modal */
 .modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.25); }
-.modal-content {
-  position: relative; background: var(--surface); border-radius: var(--radius);
-  padding: 20px 24px; min-width: 380px; max-width: 520px; max-height: 80vh;
-  overflow-y: auto; box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-}
+.modal-content { position: relative; background: var(--surface); border-radius: var(--radius); padding: 20px 24px; min-width: 380px; max-width: 520px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
 .modal-content h3 { font-size: 15px; margin-bottom: 12px; }
-.modal-content fieldset {
-  border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px;
-}
+.modal-content fieldset { border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
 .modal-content fieldset legend { font-size: 12px; color: var(--text-dim); padding: 0 6px; }
 .modal-content label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
-.modal-content input[type="text"],
-.modal-content input[type="url"],
-.modal-content input[type="password"] {
-  width: 100%; border: 1px solid var(--border); border-radius: 5px;
-  padding: 6px 8px; font-size: 13px; margin-bottom: 6px; outline: none;
-  user-select: text;
-}
+.modal-content input[type="text"], .modal-content input[type="url"], .modal-content input[type="password"], .modal-content select { width: 100%; border: 1px solid var(--border); border-radius: 5px; padding: 6px 8px; font-size: 13px; margin-bottom: 6px; outline: none; user-select: text; }
 .modal-content input:focus { border-color: var(--accent); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-.modal-actions button {
-  padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;
-  border: 1px solid var(--border); background: var(--surface);
-}
+.modal-actions button { padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); }
 .modal-actions button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .modal-actions button.primary:hover { opacity: 0.9; }
 
-/* Rewrite modal */
 .rewrite-compare { display: flex; gap: 12px; margin-bottom: 12px; }
 .rewrite-compare > div { flex: 1; }
 .rewrite-compare strong { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 4px; }
 .rewrite-compare .orig { font-size: 13px; line-height: 1.5; background: var(--bg); padding: 8px; border-radius: 6px; }
-.rewrite-compare select, .rewrite-compare textarea {
-  width: 100%; border: 1px solid var(--border); border-radius: 6px;
-  padding: 8px; font-size: 13px; font-family: var(--font); line-height: 1.5;
-  resize: vertical; outline: none; user-select: text;
-}
+.rewrite-compare textarea { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-size: 13px; font-family: var(--font); line-height: 1.5; resize: vertical; outline: none; user-select: text; }
 .rewrite-compare textarea:focus { border-color: var(--accent); }
 .rewrite-tags { margin-bottom: 12px; }
 .rewrite-tags strong { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 6px; }
 .suggested-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.suggested-tag {
-  padding: 3px 12px; font-size: 12px; border-radius: 14px; cursor: pointer;
-  background: var(--bg); border: 1px solid var(--border); color: var(--text-dim);
-}
+.suggested-tag { padding: 3px 12px; font-size: 12px; border-radius: 14px; cursor: pointer; background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); }
 .suggested-tag.selected { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
 
-/* Tags modal */
 .tag-choices { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.tag-choice {
-  padding: 3px 12px; font-size: 12px; border-radius: 14px; cursor: pointer;
-  background: var(--bg); border: 1px solid var(--border);
-}
+.tag-choice { padding: 3px 12px; font-size: 12px; border-radius: 14px; cursor: pointer; background: var(--bg); border: 1px solid var(--border); }
 .tag-choice:hover { background: var(--accent-bg); color: var(--accent); }
 .tag-input-row { display: flex; gap: 8px; margin-top: 8px; }
 .tag-input-row input { flex: 1; }
-.tag-input-row button {
-  padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;
-  background: var(--accent); color: #fff; border: none; white-space: nowrap;
-}
+.tag-input-row button { padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; background: var(--accent); color: #fff; border: none; white-space: nowrap; }
 
-/* Toast */
-#toast {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background: var(--text); color: #fff; padding: 6px 16px; border-radius: 6px;
-  font-size: 12px; z-index: 200; pointer-events: none;
-  opacity: 0; transition: opacity 0.2s;
-}
-#toast.show { opacity: 1; }
-#toast.error { background: var(--danger); }
-
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 12px; z-index: 200; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+#toast.show { opacity: 1; } #toast.error { background: var(--danger); }
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 <div id="app">
-
 <div id="header">
-  <span id="brand">Inspiration</span>
+  <span id="brand" data-i18n="brand">灵感捕手</span>
   <div id="header-actions">
-    <button id="btn-expand" title="Toggle full view">&#9776;</button>
-    <button id="btn-sync" title="WebDAV Sync">&#x21bb;</button>
-    <button id="btn-settings" title="Settings">&#x2699;</button>
+    <button id="btn-expand" data-i18n-title="expand" title="切换完整视图">&#9776;</button>
+    <button id="btn-sync" data-i18n-title="sync" title="同步">&#x21bb;</button>
+    <button id="btn-settings" data-i18n-title="settings" title="设置">&#x2699;</button>
   </div>
 </div>
 
 <div id="compact-view">
   <div id="input-area">
-    <textarea id="input" rows="1" placeholder="What's on your mind?&#10;Markdown supported. Enter to save."></textarea>
-    <button id="btn-send" title="Save (Enter)">&#x27A4;</button>
+    <textarea id="input" rows="1" data-i18n-placeholder="inputPlaceholder" placeholder="在想什么？&#10;支持 Markdown。回车保存。"></textarea>
+    <button id="btn-send" data-i18n-title="send" title="保存 (Enter)">&#x27A4;</button>
   </div>
-  <div id="quick-toast" class="hidden">Saved!</div>
+  <div id="quick-toast" class="hidden" data-i18n="saved">已保存!</div>
 </div>
 
 <div id="full-view" class="hidden">
   <div id="todo-section" class="hidden">
-    <h3>Todos</h3>
+    <h3 data-i18n="todos">待办</h3>
     <div id="todo-list"></div>
   </div>
   <div id="filter-bar">
-    <input type="text" id="search-input" placeholder="Search...">
+    <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="搜索...">
     <div id="tag-filters"></div>
     <select id="sort-select">
-      <option value="desc">Newest first</option>
-      <option value="asc">Oldest first</option>
+      <option value="desc" data-i18n="newestFirst">最新优先</option>
+      <option value="asc" data-i18n="oldestFirst">最早优先</option>
     </select>
   </div>
   <div id="timeline"></div>
-  <div id="empty-state" class="hidden">No ideas yet. Press Ctrl+Shift+I to start capturing.</div>
+  <div id="empty-state" class="hidden" data-i18n="emptyState">还没有想法。按 Ctrl+Shift+I 开始捕捉。</div>
 </div>
 
 <!-- Rewrite Modal -->
 <div id="modal-rewrite" class="modal hidden">
   <div class="modal-backdrop"></div>
   <div class="modal-content">
-    <h3>AI Rewrite</h3>
+    <h3 data-i18n="aiRewrite">AI 润色</h3>
     <div class="rewrite-compare">
       <div>
-        <strong>Original</strong>
+        <strong data-i18n="original">原文</strong>
         <div class="orig" id="rewrite-original"></div>
       </div>
     </div>
     <div>
-      <strong>Rewritten</strong>
+      <strong data-i18n="rewritten">润色后</strong>
       <textarea id="rewrite-result" rows="4"></textarea>
     </div>
     <div class="rewrite-tags" id="rewrite-tags-block">
-      <strong>Suggested tags (click to select):</strong>
+      <strong data-i18n="suggestedTagsLabel">建议标签（点击选择）：</strong>
       <div class="suggested-tags" id="rewrite-suggested-tags"></div>
     </div>
     <div class="modal-actions">
-      <button id="btn-rewrite-cancel">Cancel</button>
-      <button id="btn-rewrite-apply" class="primary">Apply</button>
+      <button id="btn-rewrite-cancel" data-i18n="cancel">取消</button>
+      <button id="btn-rewrite-apply" class="primary" data-i18n="apply">应用</button>
     </div>
   </div>
 </div>
@@ -303,22 +198,29 @@ body {
 <div id="modal-settings" class="modal hidden">
   <div class="modal-backdrop"></div>
   <div class="modal-content">
-    <h3>Settings</h3>
+    <h3 data-i18n="settingsTitle">设置</h3>
     <fieldset>
-      <legend>WebDAV Sync</legend>
-      <label>URL <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
-      <label>Username <input type="text" id="webdav-user"></label>
-      <label>Password <input type="password" id="webdav-pass"></label>
+      <legend data-i18n="language">语言 / Language</legend>
+      <label><select id="lang-select">
+        <option value="zh">中文</option>
+        <option value="en">English</option>
+      </select></label>
     </fieldset>
     <fieldset>
-      <legend>AI Rewrite (OpenAI-compatible API)</legend>
-      <label>API Key <input type="password" id="ai-key"></label>
-      <label>Endpoint <input type="url" id="ai-endpoint" placeholder="https://api.openai.com/v1/chat/completions"></label>
-      <label>Model <input type="text" id="ai-model" placeholder="gpt-4o-mini"></label>
+      <legend data-i18n="webdavSync">WebDAV 同步</legend>
+      <label data-i18n="webdavUrl">地址 <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
+      <label data-i18n="webdavUser">用户名 <input type="text" id="webdav-user"></label>
+      <label data-i18n="webdavPass">密码 <input type="password" id="webdav-pass"></label>
+    </fieldset>
+    <fieldset>
+      <legend data-i18n="aiConfig">AI 润色 (OpenAI 兼容 API)</legend>
+      <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
+      <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com/v1/chat/completions"></label>
+      <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-chat"></label>
     </fieldset>
     <div class="modal-actions">
-      <button id="btn-settings-cancel">Cancel</button>
-      <button id="btn-settings-save" class="primary">Save</button>
+      <button id="btn-settings-cancel" data-i18n="cancel">取消</button>
+      <button id="btn-settings-save" class="primary" data-i18n="save">保存</button>
     </div>
   </div>
 </div>
@@ -327,47 +229,111 @@ body {
 <div id="modal-tags" class="modal hidden">
   <div class="modal-backdrop"></div>
   <div class="modal-content">
-    <h3>Add Tag</h3>
+    <h3 data-i18n="addTag">添加标签</h3>
     <div class="tag-choices" id="tag-choices"></div>
     <div class="tag-input-row">
-      <input type="text" id="tag-input-new" placeholder="Or type a new tag name...">
-      <button id="btn-tag-add-new">Add</button>
+      <input type="text" id="tag-input-new" data-i18n-placeholder="newTagPlaceholder" placeholder="或输入新标签名...">
+      <button id="btn-tag-add-new" data-i18n="add">添加</button>
     </div>
     <div class="modal-actions">
-      <button id="btn-tags-close">Close</button>
+      <button id="btn-tags-close" data-i18n="close">关闭</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
-
 </div>
 
 <script>
 (function() {
 'use strict';
 
-// Tauri v2 IPC: resolve invoke function (works with or without npm)
+// === i18n ===
+const L = {
+  zh: {
+    brand: '灵感捕手', expand: '切换完整视图', sync: '同步', settings: '设置',
+    inputPlaceholder: '在想什么？\n支持 Markdown。回车保存。',
+    send: '保存 (Enter)', saved: '已保存!',
+    todos: '待办', searchPlaceholder: '搜索...', newestFirst: '最新优先', oldestFirst: '最早优先',
+    emptyState: '还没有想法。按 Ctrl+Shift+I 开始捕捉。',
+    aiRewrite: 'AI 润色', original: '原文', rewritten: '润色后',
+    suggestedTagsLabel: '建议标签（点击选择）：', cancel: '取消', apply: '应用',
+    settingsTitle: '设置',
+    language: '语言 / Language', webdavSync: 'WebDAV 同步',
+    webdavUrl: '地址', webdavUser: '用户名', webdavPass: '密码',
+    aiConfig: 'AI 润色 (OpenAI 兼容 API)', aiKey: 'API 密钥',
+    aiEndpoint: '接口地址', aiModel: '模型',
+    save: '保存',
+    addTag: '添加标签', newTagPlaceholder: '或输入新标签名...', add: '添加', close: '关闭',
+    tagBtn: '+标签', aiBtn: 'AI', todoBtn: '待办', deleteBtn: '×',
+    justNow: '刚刚', m: '分钟前', h: '小时前', d: '天前',
+    deleteConfirm: '确定删除这条想法？', saveFailed: '保存失败：',
+    deleteFailed: '删除失败：', syncFailed: '同步失败：',
+    syncing: '同步中...', synced: '同步完成：', up: '上传', down: '下载',
+    aiFailed: 'AI 润色失败：', rewriteFailed: '应用失败：',
+    tagAdded: '标签已添加：', applied: '润色已应用',
+    settingsSaved: '设置已保存', settingsSaveFailed: '保存设置失败：',
+    loadFail: '加载失败：',
+  },
+  en: {
+    brand: 'Inspiration', expand: 'Toggle full view', sync: 'Sync', settings: 'Settings',
+    inputPlaceholder: "What's on your mind?\nMarkdown supported. Enter to save.",
+    send: 'Save (Enter)', saved: 'Saved!',
+    todos: 'Todos', searchPlaceholder: 'Search...', newestFirst: 'Newest first', oldestFirst: 'Oldest first',
+    emptyState: 'No ideas yet. Press Ctrl+Shift+I to start capturing.',
+    aiRewrite: 'AI Rewrite', original: 'Original', rewritten: 'Rewritten',
+    suggestedTagsLabel: 'Suggested tags (click to select):', cancel: 'Cancel', apply: 'Apply',
+    settingsTitle: 'Settings',
+    language: 'Language / 语言', webdavSync: 'WebDAV Sync',
+    webdavUrl: 'URL', webdavUser: 'Username', webdavPass: 'Password',
+    aiConfig: 'AI Rewrite (OpenAI-compatible API)', aiKey: 'API Key',
+    aiEndpoint: 'Endpoint', aiModel: 'Model',
+    save: 'Save',
+    addTag: 'Add Tag', newTagPlaceholder: 'Or type a new tag name...', add: 'Add', close: 'Close',
+    tagBtn: '+Tag', aiBtn: 'AI', todoBtn: 'Todo', deleteBtn: '×',
+    justNow: 'just now', m: 'm ago', h: 'h ago', d: 'd ago',
+    deleteConfirm: 'Delete this idea?', saveFailed: 'Save failed: ',
+    deleteFailed: 'Delete failed: ', syncFailed: 'Sync failed: ',
+    syncing: 'Syncing...', synced: 'Synced: ', up: 'up', down: 'down',
+    aiFailed: 'AI rewrite failed: ', rewriteFailed: 'Failed: ',
+    tagAdded: 'Tag added: ', applied: 'Rewrite applied',
+    settingsSaved: 'Settings saved', settingsSaveFailed: 'Save failed: ',
+    loadFail: 'Load failed: ',
+  }
+};
+
+let lang = 'zh';
+function t(key) { return (L[lang] && L[lang][key]) || (L.en[key]) || key; }
+function applyLang() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (el.tagName === 'OPTION') { el.textContent = t(key); return; }
+    if (el.dataset.i18n === 'brand') { el.textContent = t('brand'); return; }
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  // Update sort text
+  const ss = document.getElementById('sort-select');
+  if (ss) {
+    ss.options[0].textContent = t('newestFirst');
+    ss.options[1].textContent = t('oldestFirst');
+  }
+  // Rerender dynamic content
+  if (state.ready) renderFullView();
+}
+
+// === Tauri IPC ===
 const invoke = (() => {
   const t = window.__TAURI__;
   if (t && t.core && t.core.invoke) return (cmd, args) => t.core.invoke(cmd, args);
   const ti = window.__TAURI_INTERNALS__;
   if (ti && ti.invoke) return (cmd, args) => ti.invoke(cmd, args);
-  // Fallback: use ipc postMessage directly
-  return (cmd, args) => {
-    return new Promise((resolve, reject) => {
-      const id = Math.random().toString(36).slice(2);
-      const cb = (e) => {
-        if (e.data && e.data.__tauri_invoke_response === id) {
-          window.removeEventListener('message', cb);
-          if (e.data.error) reject(e.data.error);
-          else resolve(e.data.result);
-        }
-      };
-      window.addEventListener('message', cb);
-      window.postMessage({ __tauri_invoke: { cmd, args, id } }, '*');
-    });
-  };
+  return (cmd, args) => Promise.reject('Tauri IPC not available');
 })();
 
 const listen = (() => {
@@ -379,19 +345,12 @@ const listen = (() => {
 const $ = {};
 const state = {
   view: 'compact',
-  ideas: [],
-  tags: [],
-  selectedTags: [],
-  searchQuery: '',
-  sortDesc: true,
-  rewriteIdeaId: null,
-  selectedSuggestedTags: new Set(),
-  tagsTargetIdeaId: null,
-  toastTimer: null,
+  ideas: [], tags: [], selectedTags: [],
+  searchQuery: '', sortDesc: true,
+  rewriteIdeaId: null, selectedSuggestedTags: new Set(),
+  tagsTargetIdeaId: null, toastTimer: null,
   ready: false,
 };
-
-function qs(sel) { return document.querySelector(sel); }
 
 function cacheDom() {
   const ids = [
@@ -404,23 +363,20 @@ function cacheDom() {
     'btn-rewrite-cancel', 'btn-rewrite-apply',
     'modal-settings', 'btn-settings-cancel', 'btn-settings-save',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
+    'lang-select',
   ];
-  const missing = [];
   for (const id of ids) {
     const el = document.getElementById(id);
-    if (el) {
-      const key = id.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-      $[key] = el;
-    } else {
-      missing.push(id);
-    }
-  }
-  if (missing.length > 0) {
-    console.error('Missing elements: ' + missing.join(', '));
+    const key = id.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    $[key] = el;
   }
 }
 
+function on(el, ev, fn) { if (el) el.addEventListener(ev, fn); }
+
+// === Helpers ===
 function toast(msg, isError) {
+  if (!$.toast) return;
   if (state.toastTimer) clearTimeout(state.toastTimer);
   $.toast.textContent = msg;
   $.toast.className = 'show' + (isError ? ' error' : '');
@@ -428,92 +384,65 @@ function toast(msg, isError) {
 }
 
 function formatTime(iso) {
-  const d = new Date(iso);
-  const now = new Date();
-  const diff = now - d;
-  if (diff < 60000) return 'just now';
-  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
-  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
-  if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
-  return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: d.getFullYear() !== now.getFullYear() ? 'numeric' : undefined });
+  const d = new Date(iso), now = new Date(), diff = now - d;
+  if (diff < 60000) return t('justNow');
+  if (diff < 3600000) return Math.floor(diff / 60000) + t('m');
+  if (diff < 86400000) return Math.floor(diff / 3600000) + t('h');
+  if (diff < 604800000) return Math.floor(diff / 86400000) + t('d');
+  return d.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en', { month: 'short', day: 'numeric', year: d.getFullYear() !== now.getFullYear() ? 'numeric' : undefined });
 }
 
-// Minimal Markdown parser (~50 lines, covers common cases)
 function renderMd(text) {
   let html = text;
   html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // Code blocks (fenced)
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-  // Inline code
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  // Headers
   html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
   html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
   html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-  // Bold + Italic
   html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  // Images
   html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
-  // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-  // Blockquote
   html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-  // Horizontal rule
   html = html.replace(/^(---|\*\*\*)$/gm, '<hr>');
-  // Unordered list
   html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
-  // Paragraphs (double newline)
   html = html.replace(/\n\n+/g, '</p><p>');
   html = '<p>' + html + '</p>';
-  // Fix: wrap adjacent <li> in <ul>
   html = html.replace(/((?:<li>.*?<\/li>\s*)+)/g, '<ul>$1</ul>');
-  // Clean empty paragraphs
   html = html.replace(/<p>\s*<\/p>/g, '');
   html = html.replace(/<p>\s*(<[houl])/g, '$1');
   html = html.replace(/(<\/[houl][^>]*>)\s*<\/p>/g, '$1');
   return html;
 }
 
-async function addIdea(content) {
-  const idea = await invoke('add_idea', { content });
-  state.ideas.unshift(idea);
-  return idea;
-}
+function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function trunc(s, n) { s = s.replace(/[#*`\n]/g, ' ').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n) + '...' : s; }
 
+// === Data ===
+async function addIdea(content) { const idea = await invoke('add_idea', { content }); state.ideas.unshift(idea); return idea; }
 async function loadIdeas() {
   const tagIds = state.selectedTags.length > 0 ? state.selectedTags : null;
-  state.ideas = await invoke('get_ideas', {
-    search: state.searchQuery || null,
-    tagIds: tagIds,
-    sortDesc: state.sortDesc,
-  });
+  state.ideas = await invoke('get_ideas', { search: state.searchQuery || null, tagIds, sortDesc: state.sortDesc });
 }
+async function loadTags() { state.tags = await invoke('get_tags', {}); }
+async function loadAndRender() { await loadIdeas(); await loadTags(); renderFullView(); }
 
-async function loadTags() {
-  state.tags = await invoke('get_tags', {});
-}
-
-async function loadAndRender() {
-  await loadIdeas();
-  await loadTags();
-  renderFullView();
-}
-
-// ---- Render ----
+// === Render ===
 function renderFullView() {
+  if (!$.todoSection) return;
   renderTodos();
   renderTagsFilter();
   renderTimeline();
-  $.emptyState.classList.toggle('hidden', state.ideas.length > 0);
+  if ($.emptyState) $.emptyState.classList.toggle('hidden', state.ideas.length > 0);
 }
 
 function renderTodos() {
   const todos = state.ideas.filter(i => i.is_todo && !i.deleted);
-  $.todoSection.classList.toggle('hidden', todos.length === 0);
-  if (todos.length === 0) return;
+  if ($.todoSection) $.todoSection.classList.toggle('hidden', todos.length === 0);
+  if (todos.length === 0 || !$.todoList) return;
   $.todoList.innerHTML = todos.map(i => {
     const cls = i.todo_done ? 'done' : '';
     return `<div class="todo-item ${cls}">
@@ -524,6 +453,7 @@ function renderTodos() {
 }
 
 function renderTagsFilter() {
+  if (!$.tagFilters) return;
   $.tagFilters.innerHTML = state.tags.filter(t => t.count > 0).map(t => {
     const active = state.selectedTags.includes(t.id);
     return `<span class="tag-pill${active ? ' active' : ''}" data-id="${t.id}">${escHtml(t.name)} ${t.count}</span>`;
@@ -531,6 +461,7 @@ function renderTagsFilter() {
 }
 
 function renderTimeline() {
+  if (!$.timeline) return;
   $.timeline.innerHTML = state.ideas.map(idea => renderCard(idea)).join('');
 }
 
@@ -538,7 +469,6 @@ function renderCard(idea) {
   const tagsHtml = idea.tags.map(t =>
     `<span class="tag" data-tag-id="${t.id}" data-idea-id="${idea.id}">${escHtml(t.name)} &times;</span>`
   ).join('');
-
   return `<div class="idea-card" data-id="${idea.id}">
     <div class="content">${renderMd(idea.content)}</div>
     <div class="meta">
@@ -546,285 +476,219 @@ function renderCard(idea) {
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="tags">${tagsHtml}</div>
         <div class="actions">
-          <button class="btn-tag" data-id="${idea.id}" title="Add tag">+Tag</button>
-          <button class="btn-ai" data-id="${idea.id}" title="AI Rewrite">AI</button>
-          <button class="btn-todo" data-id="${idea.id}" title="${idea.is_todo ? 'Todo ✓' : 'Convert to todo'}">${idea.is_todo ? '☑' : '☐'}</button>
-          <button class="btn-delete danger" data-id="${idea.id}" title="Delete">&times;</button>
+          <button class="btn-tag" data-id="${idea.id}" title="${t('addTag')}">${t('tagBtn')}</button>
+          <button class="btn-ai" data-id="${idea.id}" title="${t('aiRewrite')}">${t('aiBtn')}</button>
+          <button class="btn-todo" data-id="${idea.id}" title="${t('todoBtn')}">${idea.is_todo ? '☑' : '☐'}</button>
+          <button class="btn-delete danger" data-id="${idea.id}" title="${t('deleteBtn')}">${t('deleteBtn')}</button>
         </div>
       </div>
     </div>
   </div>`;
 }
 
-function escHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function trunc(s, n) {
-  s = s.replace(/[#*`\n]/g, ' ').replace(/\s+/g, ' ').trim();
-  return s.length > n ? s.slice(0, n) + '...' : s;
-}
-
-// ---- View switching ----
+// === Views ===
 function switchToCompact() {
   state.view = 'compact';
-  $.compactView.classList.remove('hidden');
-  $.fullView.classList.add('hidden');
-  $.input.focus();
+  if ($.compactView) $.compactView.classList.remove('hidden');
+  if ($.fullView) $.fullView.classList.add('hidden');
+  if ($.input) $.input.focus();
 }
-
 function switchToFull() {
   state.view = 'full';
-  $.compactView.classList.add('hidden');
-  $.fullView.classList.remove('hidden');
+  if ($.compactView) $.compactView.classList.add('hidden');
+  if ($.fullView) $.fullView.classList.remove('hidden');
   loadAndRender();
 }
+function toggleView() { if (state.view === 'compact') switchToFull(); else switchToCompact(); }
 
-function toggleView() {
-  if (state.view === 'compact') switchToFull();
-  else switchToCompact();
-}
-
-// ---- Actions ----
+// === Actions ===
 async function handleSubmit() {
+  if (!$.input) return;
   const content = $.input.value.trim();
   if (!content) return;
   try {
     await addIdea(content);
-    $.input.value = '';
-    $.input.style.height = 'auto';
-    $.quickToast.classList.remove('hidden');
-    setTimeout(() => { $.quickToast.classList.add('hidden'); }, 1500);
-  } catch (e) {
-    toast('Save failed: ' + e, true);
-  }
+    $.input.value = ''; $.input.style.height = 'auto';
+    if ($.quickToast) { $.quickToast.classList.remove('hidden'); setTimeout(() => { $.quickToast.classList.add('hidden'); }, 1500); }
+  } catch (e) { toast(t('saveFailed') + e, true); }
 }
-
 async function handleDelete(id) {
-  if (!confirm('Delete this idea?')) return;
-  try {
-    await invoke('delete_idea', { id });
-    state.ideas = state.ideas.filter(i => i.id !== id);
-    renderFullView();
-  } catch (e) { toast('Delete failed: ' + e, true); }
+  if (!confirm(t('deleteConfirm'))) return;
+  try { await invoke('delete_idea', { id }); state.ideas = state.ideas.filter(i => i.id !== id); renderFullView(); }
+  catch (e) { toast(t('deleteFailed') + e, true); }
 }
-
 async function handleToggleTodo(id) {
-  try {
-    const idea = await invoke('toggle_todo', { id });
-    const idx = state.ideas.findIndex(i => i.id === id);
-    if (idx >= 0) state.ideas[idx] = idea;
-    renderFullView();
-  } catch (e) { toast('Failed: ' + e, true); }
+  try { const idea = await invoke('toggle_todo', { id }); const idx = state.ideas.findIndex(i => i.id === id); if (idx >= 0) state.ideas[idx] = idea; renderFullView(); }
+  catch (e) { toast(t('rewriteFailed') + e, true); }
 }
-
 async function handleToggleDone(id) {
-  try {
-    const idea = await invoke('toggle_todo_done', { id });
-    const idx = state.ideas.findIndex(i => i.id === id);
-    if (idx >= 0) state.ideas[idx] = idea;
-    renderFullView();
-  } catch (e) { toast('Failed: ' + e, true); }
+  try { const idea = await invoke('toggle_todo_done', { id }); const idx = state.ideas.findIndex(i => i.id === id); if (idx >= 0) state.ideas[idx] = idea; renderFullView(); }
+  catch (e) { toast(t('rewriteFailed') + e, true); }
 }
 
-// ---- Tags ----
+// === Tags ===
 async function openTagsModal(ideaId) {
   state.tagsTargetIdeaId = ideaId;
   const idea = state.ideas.find(i => i.id === ideaId);
   if (!idea) return;
   const ideaTagNames = new Set(idea.tags.map(t => t.name));
-  $.tagChoices.innerHTML = state.tags.map(t => {
+  if ($.tagChoices) $.tagChoices.innerHTML = state.tags.map(t => {
     const added = ideaTagNames.has(t.name);
     return `<span class="tag-choice" data-tag-id="${t.id}" style="${added ? 'opacity:0.4;cursor:default;' : ''}">${escHtml(t.name)}</span>`;
   }).join('');
-  $.tagInputNew.value = '';
-  $.modalTags.classList.remove('hidden');
+  if ($.tagInputNew) $.tagInputNew.value = '';
+  if ($.modalTags) $.modalTags.classList.remove('hidden');
 }
-
 async function addTagToIdea(ideaId, tagName) {
   try {
     const tag = await invoke('add_tag', { ideaId, name: tagName });
     const idea = state.ideas.find(i => i.id === ideaId);
-    if (idea && !idea.tags.find(t => t.id === tag.id)) {
-      idea.tags.push({ id: tag.id, name: tag.name });
-    }
-    await loadTags();
-    renderFullView();
-    toast('Tag added: ' + tagName);
-  } catch (e) { toast('Error: ' + e, true); }
+    if (idea && !idea.tags.find(t => t.id === tag.id)) idea.tags.push({ id: tag.id, name: tag.name });
+    await loadTags(); renderFullView();
+    toast(t('tagAdded') + tagName);
+  } catch (e) { toast(t('rewriteFailed') + e, true); }
 }
-
 async function handleTagClick(tagId, ideaId) {
-  // Clicking a tag on a card removes it
   const idea = state.ideas.find(i => i.id === ideaId);
   if (!idea) return;
-  const tag = idea.tags.find(t => t.id === tagId);
-  if (!tag) return;
   try {
     await invoke('remove_tag', { ideaId, tagId });
     idea.tags = idea.tags.filter(t => t.id !== tagId);
-    await loadTags();
-    renderFullView();
-  } catch (e) { toast('Error: ' + e, true); }
+    await loadTags(); renderFullView();
+  } catch (e) { toast(t('rewriteFailed') + e, true); }
 }
 
-// ---- AI Rewrite ----
+// === AI ===
 async function handleAiRewrite(id) {
   state.rewriteIdeaId = id;
   const idea = state.ideas.find(i => i.id === id);
   if (!idea) return;
-  $.rewriteOriginal.textContent = idea.content;
-  $.rewriteResult.value = 'Loading...';
-  $.rewriteSuggestedTags.innerHTML = '';
-  $.modalRewrite.classList.remove('hidden');
-
+  if ($.rewriteOriginal) $.rewriteOriginal.textContent = idea.content;
+  if ($.rewriteResult) $.rewriteResult.value = '...';
+  if ($.rewriteSuggestedTags) $.rewriteSuggestedTags.innerHTML = '';
+  if ($.modalRewrite) $.modalRewrite.classList.remove('hidden');
   try {
     const result = await invoke('rewrite_idea', { id });
-    $.rewriteResult.value = result.rewritten;
+    if ($.rewriteResult) $.rewriteResult.value = result.rewritten;
     state.selectedSuggestedTags = new Set();
-    $.rewriteSuggestedTags.innerHTML = result.suggested_tags.map(t =>
-      `<span class="suggested-tag" data-tag="${escHtml(t)}">${escHtml(t)}</span>`
-    ).join('');
-    $.rewriteTagsBlock.classList.remove('hidden');
+    if ($.rewriteSuggestedTags) $.rewriteSuggestedTags.innerHTML = result.suggested_tags.map(t =>
+      `<span class="suggested-tag" data-tag="${escHtml(t)}">${escHtml(t)}</span>`).join('');
+    if ($.rewriteTagsBlock) $.rewriteTagsBlock.classList.remove('hidden');
   } catch (e) {
-    $.rewriteResult.value = '';
-    $.rewriteTagsBlock.classList.add('hidden');
-    toast('AI rewrite failed: ' + e, true);
+    if ($.rewriteResult) $.rewriteResult.value = '';
+    if ($.rewriteTagsBlock) $.rewriteTagsBlock.classList.add('hidden');
+    toast(t('aiFailed') + e, true);
   }
 }
-
 async function applyRewrite() {
   const id = state.rewriteIdeaId;
-  const rewritten = $.rewriteResult.value.trim();
+  const rewritten = $.rewriteResult ? $.rewriteResult.value.trim() : '';
   if (!rewritten || id === null) return;
   try {
     await invoke('update_idea', { id, content: rewritten });
-    // Apply selected tags
     for (const tagName of state.selectedSuggestedTags) {
-      try { await invoke('add_tag', { ideaId: id, name: tagName }); } catch (e) { /* ok if exists */ }
+      try { await invoke('add_tag', { ideaId: id, name: tagName }); } catch (e) {}
     }
-    $.modalRewrite.classList.add('hidden');
-    state.rewriteIdeaId = null;
-    state.selectedSuggestedTags.clear();
-    await loadIdeas();
-    await loadTags();
-    renderFullView();
-    toast('Rewrite applied');
-  } catch (e) { toast('Failed: ' + e, true); }
+    if ($.modalRewrite) $.modalRewrite.classList.add('hidden');
+    state.rewriteIdeaId = null; state.selectedSuggestedTags.clear();
+    await loadIdeas(); await loadTags(); renderFullView();
+    toast(t('applied'));
+  } catch (e) { toast(t('rewriteFailed') + e, true); }
 }
 
-// ---- Sync ----
+// === Sync ===
 async function handleSync() {
   try {
-    toast('Syncing...');
+    toast(t('syncing'));
     const result = await invoke('sync_now', {});
-    let msg = `Synced: ${result.uploaded} up, ${result.downloaded} down`;
-    if (result.errors && result.errors.length > 0) {
-      msg += ' (' + result.errors.length + ' errors)';
-    }
-    toast(msg);
-    await loadAndRender();
-  } catch (e) { toast('Sync failed: ' + e, true); }
+    let msg = t('synced') + result.uploaded + ' ' + t('up') + ', ' + result.downloaded + ' ' + t('down');
+    if (result.errors && result.errors.length > 0) msg += ' (' + result.errors.length + ' errors)';
+    toast(msg); await loadAndRender();
+  } catch (e) { toast(t('syncFailed') + e, true); }
 }
 
-// ---- Settings ----
+// === Settings ===
 async function openSettings() {
   try {
     const wc = await invoke('get_webdav_config', {});
     if (wc) {
-      qs('#webdav-url').value = wc.url || '';
-      qs('#webdav-user').value = wc.username || '';
-      qs('#webdav-pass').value = wc.password || '';
+      const wu = document.getElementById('webdav-url'); if (wu) wu.value = wc.url || '';
+      const wun = document.getElementById('webdav-user'); if (wun) wun.value = wc.username || '';
+      const wp = document.getElementById('webdav-pass'); if (wp) wp.value = wc.password || '';
     }
     const ac = await invoke('get_ai_config', {});
-    if (ac) {
-      qs('#ai-key').value = ac.api_key || '';
-      qs('#ai-endpoint').value = ac.endpoint || 'https://api.openai.com/v1/chat/completions';
-      qs('#ai-model').value = ac.model || 'gpt-4o-mini';
-    }
-  } catch (e) { /* ignore */ }
-  $.modalSettings.classList.remove('hidden');
+    const ak = document.getElementById('ai-key'); if (ak) ak.value = ac ? ac.api_key : '';
+    const ae = document.getElementById('ai-endpoint'); if (ae) ae.value = (ac && ac.endpoint) ? ac.endpoint : 'https://api.deepseek.com/v1/chat/completions';
+    const am = document.getElementById('ai-model'); if (am) am.value = (ac && ac.model) ? ac.model : 'deepseek-chat';
+    // Language
+    try { const savedLang = await invoke('get_setting', { key: 'language' });
+      if (savedLang) { lang = savedLang; }
+    } catch(e) {}
+    if ($.langSelect) $.langSelect.value = lang;
+  } catch (e) {}
+  if ($.modalSettings) $.modalSettings.classList.remove('hidden');
 }
 
 async function saveSettings() {
   try {
     await invoke('save_webdav_config', {
-      url: qs('#webdav-url').value.trim(),
-      username: qs('#webdav-user').value.trim(),
-      password: qs('#webdav-pass').value,
+      url: (document.getElementById('webdav-url') || {}).value || '',
+      username: (document.getElementById('webdav-user') || {}).value || '',
+      password: (document.getElementById('webdav-pass') || {}).value || '',
     });
-    const ep = qs('#ai-endpoint').value.trim();
     await invoke('save_ai_config', {
-      apiKey: qs('#ai-key').value.trim(),
-      endpoint: ep || null,
-      model: qs('#ai-model').value.trim() || null,
+      apiKey: (document.getElementById('ai-key') || {}).value || '',
+      endpoint: (document.getElementById('ai-endpoint') || {}).value || null,
+      model: (document.getElementById('ai-model') || {}).value || null,
     });
-    $.modalSettings.classList.add('hidden');
-    toast('Settings saved');
-  } catch (e) { toast('Save failed: ' + e, true); }
+    // Save language
+    if ($.langSelect) {
+      const newLang = $.langSelect.value;
+      if (newLang !== lang) {
+        lang = newLang;
+        try { await invoke('save_setting', { key: 'language', value: lang }); } catch(e) {}
+        applyLang();
+      }
+    }
+    if ($.modalSettings) $.modalSettings.classList.add('hidden');
+    toast(t('settingsSaved'));
+  } catch (e) { toast(t('settingsSaveFailed') + e, true); }
 }
 
-// ---- Event handlers ----
-function on(el, ev, fn) { if (el) el.addEventListener(ev, fn); }
-
+// === Events ===
 function setupEvents() {
-  // Submit
   on($.input, 'keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-    if (e.key === 'Escape') {
-      invoke('hide_window').catch(() => {});
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
+    if (e.key === 'Escape') { invoke('hide_window').catch(() => {}); }
   });
-  on($.input, 'input', () => {
-    if (!$.input) return;
-    $.input.style.height = 'auto';
-    $.input.style.height = Math.min($.input.scrollHeight, 160) + 'px';
-  });
+  on($.input, 'input', () => { if ($.input) { $.input.style.height = 'auto'; $.input.style.height = Math.min($.input.scrollHeight, 160) + 'px'; } });
   on($.btnSend, 'click', handleSubmit);
   on($.btnExpand, 'click', toggleView);
   on($.btnSync, 'click', handleSync);
   on($.btnSettings, 'click', openSettings);
-  on($.btnSettingsCancel, 'click', () => { $.modalSettings && $.modalSettings.classList.add('hidden'); });
+  on($.btnSettingsCancel, 'click', () => { if ($.modalSettings) $.modalSettings.classList.add('hidden'); });
   on($.btnSettingsSave, 'click', saveSettings);
+  on(document.querySelector('#modal-settings .modal-backdrop'), 'click', () => { if ($.modalSettings) $.modalSettings.classList.add('hidden'); });
 
-  const msBackdrop = qs('#modal-settings .modal-backdrop');
-  on(msBackdrop, 'click', () => { $.modalSettings && $.modalSettings.classList.add('hidden'); });
-
-  // Rewrite modal
   on($.btnRewriteCancel, 'click', () => {
-    $.modalRewrite && $.modalRewrite.classList.add('hidden');
+    if ($.modalRewrite) $.modalRewrite.classList.add('hidden');
     state.rewriteIdeaId = null; state.selectedSuggestedTags.clear();
   });
   on($.btnRewriteApply, 'click', applyRewrite);
-
-  const mrBackdrop = qs('#modal-rewrite .modal-backdrop');
-  on(mrBackdrop, 'click', () => {
-    $.modalRewrite && $.modalRewrite.classList.add('hidden');
+  on(document.querySelector('#modal-rewrite .modal-backdrop'), 'click', () => {
+    if ($.modalRewrite) $.modalRewrite.classList.add('hidden');
     state.rewriteIdeaId = null; state.selectedSuggestedTags.clear();
   });
-
-  // Suggested tags
   on($.rewriteSuggestedTags, 'click', (e) => {
-    const el = e.target.closest('.suggested-tag');
-    if (!el) return;
+    const el = e.target.closest('.suggested-tag'); if (!el) return;
     const tag = el.dataset.tag;
-    if (state.selectedSuggestedTags.has(tag)) {
-      state.selectedSuggestedTags.delete(tag);
-      el.classList.remove('selected');
-    } else {
-      state.selectedSuggestedTags.add(tag);
-      el.classList.add('selected');
-    }
+    if (state.selectedSuggestedTags.has(tag)) { state.selectedSuggestedTags.delete(tag); el.classList.remove('selected'); }
+    else { state.selectedSuggestedTags.add(tag); el.classList.add('selected'); }
   });
 
-  // Tags modal
-  on($.btnTagsClose, 'click', () => { $.modalTags && $.modalTags.classList.add('hidden'); });
+  on($.btnTagsClose, 'click', () => { if ($.modalTags) $.modalTags.classList.add('hidden'); });
   on($.tagChoices, 'click', async (e) => {
-    const el = e.target.closest('.tag-choice');
-    if (!el) return;
+    const el = e.target.closest('.tag-choice'); if (!el) return;
     if (el.style.opacity === '0.4') return;
     const tagId = parseInt(el.dataset.tagId);
     const tag = state.tags.find(t => t.id === tagId);
@@ -838,92 +702,61 @@ function setupEvents() {
     await addTagToIdea(state.tagsTargetIdeaId, name);
     openTagsModal(state.tagsTargetIdeaId);
   });
-  on($.tagInputNew, 'keydown', (e) => {
-    if (e.key === 'Enter' && $.btnTagAddNew) $.btnTagAddNew.click();
-  });
+  on($.tagInputNew, 'keydown', (e) => { if (e.key === 'Enter' && $.btnTagAddNew) $.btnTagAddNew.click(); });
 
-  // Timeline delegation
   on($.timeline, 'click', (e) => {
-    const card = e.target.closest('.idea-card');
-    if (!card) return;
+    const card = e.target.closest('.idea-card'); if (!card) return;
     const id = parseInt(card.dataset.id);
     if (e.target.closest('.btn-tag')) { openTagsModal(id); return; }
     if (e.target.closest('.btn-ai')) { handleAiRewrite(id); return; }
     if (e.target.closest('.btn-todo')) { handleToggleTodo(id); return; }
     if (e.target.closest('.btn-delete')) { handleDelete(id); return; }
     const tagEl = e.target.closest('.tag');
-    if (tagEl) {
-      handleTagClick(parseInt(tagEl.dataset.tagId), parseInt(tagEl.dataset.ideaId));
-    }
+    if (tagEl) handleTagClick(parseInt(tagEl.dataset.tagId), parseInt(tagEl.dataset.ideaId));
   });
 
-  // Todo checkbox
-  on($.todoList, 'change', (e) => {
-    if (e.target.type === 'checkbox') {
-      handleToggleDone(parseInt(e.target.dataset.id));
-    }
-  });
+  on($.todoList, 'change', (e) => { if (e.target.type === 'checkbox') handleToggleDone(parseInt(e.target.dataset.id)); });
 
-  // Search (debounced)
   let searchTimer;
-  on($.searchInput, 'input', () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      state.searchQuery = $.searchInput ? $.searchInput.value : '';
-      loadAndRender();
-    }, 200);
-  });
-
-  // Sort
-  on($.sortSelect, 'change', () => {
-    state.sortDesc = $.sortSelect ? $.sortSelect.value === 'desc' : true;
-    loadAndRender();
-  });
-
-  // Tag filter clicks
+  on($.searchInput, 'input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.searchQuery = $.searchInput ? $.searchInput.value : ''; loadAndRender(); }, 200); });
+  on($.sortSelect, 'change', () => { state.sortDesc = $.sortSelect ? $.sortSelect.value === 'desc' : true; loadAndRender(); });
   on($.tagFilters, 'click', (e) => {
-    const pill = e.target.closest('.tag-pill');
-    if (!pill) return;
+    const pill = e.target.closest('.tag-pill'); if (!pill) return;
     const tagId = parseInt(pill.dataset.id);
     const idx = state.selectedTags.indexOf(tagId);
-    if (idx >= 0) state.selectedTags.splice(idx, 1);
-    else state.selectedTags.push(tagId);
+    if (idx >= 0) state.selectedTags.splice(idx, 1); else state.selectedTags.push(tagId);
     loadAndRender();
   });
 
-  // Close modals on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if ($.modalRewrite && !$.modalRewrite.classList.contains('hidden')) {
-        $.modalRewrite.classList.add('hidden');
-        state.rewriteIdeaId = null;
-        state.selectedSuggestedTags.clear();
-      } else if ($.modalSettings && !$.modalSettings.classList.contains('hidden')) {
-        $.modalSettings.classList.add('hidden');
-      } else if ($.modalTags && !$.modalTags.classList.contains('hidden')) {
-        $.modalTags.classList.add('hidden');
-      }
+      if ($.modalRewrite && !$.modalRewrite.classList.contains('hidden')) { $.modalRewrite.classList.add('hidden'); state.rewriteIdeaId = null; state.selectedSuggestedTags.clear(); }
+      else if ($.modalSettings && !$.modalSettings.classList.contains('hidden')) { $.modalSettings.classList.add('hidden'); }
+      else if ($.modalTags && !$.modalTags.classList.contains('hidden')) { $.modalTags.classList.add('hidden'); }
     }
   });
 }
 
-// ---- Init ----
+// === Init ===
 async function init() {
   cacheDom();
+
+  // Load saved language
+  try {
+    const savedLang = await invoke('get_setting', { key: 'language' });
+    if (savedLang && (savedLang === 'zh' || savedLang === 'en')) lang = savedLang;
+  } catch(e) {}
+
+  applyLang();
   setupEvents();
 
-  // Listen for focus event from Rust backend (global shortcut)
   try {
-    await listen('focus-input', () => {
-      switchToCompact();
-      $.input.focus();
-    });
-  } catch (e) { /* Tauri events may not be available in dev */ }
+    await listen('focus-input', () => { switchToCompact(); if ($.input) $.input.focus(); });
+  } catch (e) {}
 
-  // Load initial tags for tag suggestions
-  try {
-    await loadTags();
-  } catch (e) { /* DB may not be ready */ }
+  try { await loadTags(); } catch (e) {}
+
+  state.ready = true;
 }
 
 document.addEventListener('DOMContentLoaded', init);

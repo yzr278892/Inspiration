@@ -88,6 +88,8 @@ pub fn run() {
             commands::get_ai_config,
             commands::sync_now,
             commands::hide_window,
+            commands::save_setting,
+            commands::get_setting,
         ])
         .run(tauri::generate_context!())
         .expect("error running tauri application");
