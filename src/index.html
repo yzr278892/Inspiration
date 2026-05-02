@@ -347,11 +347,34 @@ body {
 (function() {
 'use strict';
 
-const invoke = window.__TAURI__ ? window.__TAURI__.core.invoke :
-  (window.__TAURI_INTERNALS__ ? window.__TAURI_INTERNALS__.invoke :
-  (cmd, args) => Promise.reject('Tauri not available'));
+// Tauri v2 IPC: resolve invoke function (works with or without npm)
+const invoke = (() => {
+  const t = window.__TAURI__;
+  if (t && t.core && t.core.invoke) return (cmd, args) => t.core.invoke(cmd, args);
+  const ti = window.__TAURI_INTERNALS__;
+  if (ti && ti.invoke) return (cmd, args) => ti.invoke(cmd, args);
+  // Fallback: use ipc postMessage directly
+  return (cmd, args) => {
+    return new Promise((resolve, reject) => {
+      const id = Math.random().toString(36).slice(2);
+      const cb = (e) => {
+        if (e.data && e.data.__tauri_invoke_response === id) {
+          window.removeEventListener('message', cb);
+          if (e.data.error) reject(e.data.error);
+          else resolve(e.data.result);
+        }
+      };
+      window.addEventListener('message', cb);
+      window.postMessage({ __tauri_invoke: { cmd, args, id } }, '*');
+    });
+  };
+})();
 
-const listen = window.__TAURI__ ? window.__TAURI__.event.listen : () => {};
+const listen = (() => {
+  const t = window.__TAURI__;
+  if (t && t.event && t.event.listen) return (ev, cb) => t.event.listen(ev, cb);
+  return () => {};
+})();
 
 const $ = {};
 const state = {
@@ -365,43 +388,36 @@ const state = {
   selectedSuggestedTags: new Set(),
   tagsTargetIdeaId: null,
   toastTimer: null,
+  ready: false,
 };
 
 function qs(sel) { return document.querySelector(sel); }
-function qsa(sel) { return document.querySelectorAll(sel); }
 
 function cacheDom() {
-  $.input = qs('#input');
-  $.btnSend = qs('#btn-send');
-  $.btnExpand = qs('#btn-expand');
-  $.btnSync = qs('#btn-sync');
-  $.btnSettings = qs('#btn-settings');
-  $.compactView = qs('#compact-view');
-  $.fullView = qs('#full-view');
-  $.todoSection = qs('#todo-section');
-  $.todoList = qs('#todo-list');
-  $.searchInput = qs('#search-input');
-  $.sortSelect = qs('#sort-select');
-  $.tagFilters = qs('#tag-filters');
-  $.timeline = qs('#timeline');
-  $.emptyState = qs('#empty-state');
-  $.quickToast = qs('#quick-toast');
-  $.toast = qs('#toast');
-  $.modalRewrite = qs('#modal-rewrite');
-  $.rewriteOriginal = qs('#rewrite-original');
-  $.rewriteResult = qs('#rewrite-result');
-  $.rewriteSuggestedTags = qs('#rewrite-suggested-tags');
-  $.rewriteTagsBlock = qs('#rewrite-tags-block');
-  $.btnRewriteCancel = qs('#btn-rewrite-cancel');
-  $.btnRewriteApply = qs('#btn-rewrite-apply');
-  $.modalSettings = qs('#modal-settings');
-  $.btnSettingsCancel = qs('#btn-settings-cancel');
-  $.btnSettingsSave = qs('#btn-settings-save');
-  $.modalTags = qs('#modal-tags');
-  $.tagChoices = qs('#tag-choices');
-  $.tagInputNew = qs('#tag-input-new');
-  $.btnTagAddNew = qs('#btn-tag-add-new');
-  $.btnTagsClose = qs('#btn-tags-close');
+  const ids = [
+    'input', 'btn-send', 'btn-expand', 'btn-sync', 'btn-settings',
+    'compact-view', 'full-view', 'todo-section', 'todo-list',
+    'search-input', 'sort-select', 'tag-filters', 'timeline', 'empty-state',
+    'quick-toast', 'toast',
+    'modal-rewrite', 'rewrite-original', 'rewrite-result',
+    'rewrite-suggested-tags', 'rewrite-tags-block',
+    'btn-rewrite-cancel', 'btn-rewrite-apply',
+    'modal-settings', 'btn-settings-cancel', 'btn-settings-save',
+    'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
+  ];
+  const missing = [];
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) {
+      const key = id.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      $[key] = el;
+    } else {
+      missing.push(id);
+    }
+  }
+  if (missing.length > 0) {
+    console.error('Missing elements: ' + missing.join(', '));
+  }
 }
 
 function toast(msg, isError) {
@@ -749,9 +765,11 @@ async function saveSettings() {
 }
 
 // ---- Event handlers ----
+function on(el, ev, fn) { if (el) el.addEventListener(ev, fn); }
+
 function setupEvents() {
   // Submit
-  $.input.addEventListener('keydown', (e) => {
+  on($.input, 'keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
@@ -760,31 +778,36 @@ function setupEvents() {
       invoke('hide_window').catch(() => {});
     }
   });
-  $.input.addEventListener('input', () => {
+  on($.input, 'input', () => {
+    if (!$.input) return;
     $.input.style.height = 'auto';
     $.input.style.height = Math.min($.input.scrollHeight, 160) + 'px';
   });
-  $.btnSend.addEventListener('click', handleSubmit);
+  on($.btnSend, 'click', handleSubmit);
+  on($.btnExpand, 'click', toggleView);
+  on($.btnSync, 'click', handleSync);
+  on($.btnSettings, 'click', openSettings);
+  on($.btnSettingsCancel, 'click', () => { $.modalSettings && $.modalSettings.classList.add('hidden'); });
+  on($.btnSettingsSave, 'click', saveSettings);
 
-  // View toggle
-  $.btnExpand.addEventListener('click', toggleView);
-
-  // Sync
-  $.btnSync.addEventListener('click', handleSync);
-
-  // Settings
-  $.btnSettings.addEventListener('click', openSettings);
-  $.btnSettingsCancel.addEventListener('click', () => { $.modalSettings.classList.add('hidden'); });
-  $.btnSettingsSave.addEventListener('click', saveSettings);
-  qs('#modal-settings .modal-backdrop').addEventListener('click', () => { $.modalSettings.classList.add('hidden'); });
+  const msBackdrop = qs('#modal-settings .modal-backdrop');
+  on(msBackdrop, 'click', () => { $.modalSettings && $.modalSettings.classList.add('hidden'); });
 
   // Rewrite modal
-  $.btnRewriteCancel.addEventListener('click', () => { $.modalRewrite.classList.add('hidden'); state.rewriteIdeaId = null; state.selectedSuggestedTags.clear(); });
-  $.btnRewriteApply.addEventListener('click', applyRewrite);
-  qs('#modal-rewrite .modal-backdrop').addEventListener('click', () => { $.modalRewrite.classList.add('hidden'); state.rewriteIdeaId = null; state.selectedSuggestedTags.clear(); });
+  on($.btnRewriteCancel, 'click', () => {
+    $.modalRewrite && $.modalRewrite.classList.add('hidden');
+    state.rewriteIdeaId = null; state.selectedSuggestedTags.clear();
+  });
+  on($.btnRewriteApply, 'click', applyRewrite);
 
-  // Suggested tags click
-  $.rewriteSuggestedTags.addEventListener('click', (e) => {
+  const mrBackdrop = qs('#modal-rewrite .modal-backdrop');
+  on(mrBackdrop, 'click', () => {
+    $.modalRewrite && $.modalRewrite.classList.add('hidden');
+    state.rewriteIdeaId = null; state.selectedSuggestedTags.clear();
+  });
+
+  // Suggested tags
+  on($.rewriteSuggestedTags, 'click', (e) => {
     const el = e.target.closest('.suggested-tag');
     if (!el) return;
     const tag = el.dataset.tag;
@@ -798,48 +821,44 @@ function setupEvents() {
   });
 
   // Tags modal
-  $.btnTagsClose.addEventListener('click', () => { $.modalTags.classList.add('hidden'); });
-  $.tagChoices.addEventListener('click', async (e) => {
+  on($.btnTagsClose, 'click', () => { $.modalTags && $.modalTags.classList.add('hidden'); });
+  on($.tagChoices, 'click', async (e) => {
     const el = e.target.closest('.tag-choice');
     if (!el) return;
+    if (el.style.opacity === '0.4') return;
     const tagId = parseInt(el.dataset.tagId);
     const tag = state.tags.find(t => t.id === tagId);
-    if (!tag) return;
-    if (el.style.opacity === '0.4') return; // Already added
+    if (!tag || !state.tagsTargetIdeaId) return;
     await addTagToIdea(state.tagsTargetIdeaId, tag.name);
-    // Reopen modal with updated state
     openTagsModal(state.tagsTargetIdeaId);
   });
-  $.btnTagAddNew.addEventListener('click', async () => {
-    const name = $.tagInputNew.value.trim();
+  on($.btnTagAddNew, 'click', async () => {
+    const name = $.tagInputNew ? $.tagInputNew.value.trim() : '';
     if (!name || !state.tagsTargetIdeaId) return;
     await addTagToIdea(state.tagsTargetIdeaId, name);
     openTagsModal(state.tagsTargetIdeaId);
   });
-  $.tagInputNew.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') $.btnTagAddNew.click();
+  on($.tagInputNew, 'keydown', (e) => {
+    if (e.key === 'Enter' && $.btnTagAddNew) $.btnTagAddNew.click();
   });
 
   // Timeline delegation
-  $.timeline.addEventListener('click', (e) => {
+  on($.timeline, 'click', (e) => {
     const card = e.target.closest('.idea-card');
     if (!card) return;
     const id = parseInt(card.dataset.id);
-
     if (e.target.closest('.btn-tag')) { openTagsModal(id); return; }
     if (e.target.closest('.btn-ai')) { handleAiRewrite(id); return; }
     if (e.target.closest('.btn-todo')) { handleToggleTodo(id); return; }
     if (e.target.closest('.btn-delete')) { handleDelete(id); return; }
-    // Tag removal on card
     const tagEl = e.target.closest('.tag');
     if (tagEl) {
       handleTagClick(parseInt(tagEl.dataset.tagId), parseInt(tagEl.dataset.ideaId));
-      return;
     }
   });
 
   // Todo checkbox
-  $.todoList.addEventListener('change', (e) => {
+  on($.todoList, 'change', (e) => {
     if (e.target.type === 'checkbox') {
       handleToggleDone(parseInt(e.target.dataset.id));
     }
@@ -847,44 +866,41 @@ function setupEvents() {
 
   // Search (debounced)
   let searchTimer;
-  $.searchInput.addEventListener('input', () => {
+  on($.searchInput, 'input', () => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-      state.searchQuery = $.searchInput.value;
+      state.searchQuery = $.searchInput ? $.searchInput.value : '';
       loadAndRender();
     }, 200);
   });
 
   // Sort
-  $.sortSelect.addEventListener('change', () => {
-    state.sortDesc = $.sortSelect.value === 'desc';
+  on($.sortSelect, 'change', () => {
+    state.sortDesc = $.sortSelect ? $.sortSelect.value === 'desc' : true;
     loadAndRender();
   });
 
   // Tag filter clicks
-  $.tagFilters.addEventListener('click', (e) => {
+  on($.tagFilters, 'click', (e) => {
     const pill = e.target.closest('.tag-pill');
     if (!pill) return;
     const tagId = parseInt(pill.dataset.id);
     const idx = state.selectedTags.indexOf(tagId);
-    if (idx >= 0) {
-      state.selectedTags.splice(idx, 1);
-    } else {
-      state.selectedTags.push(tagId);
-    }
+    if (idx >= 0) state.selectedTags.splice(idx, 1);
+    else state.selectedTags.push(tagId);
     loadAndRender();
   });
 
   // Close modals on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (!$.modalRewrite.classList.contains('hidden')) {
+      if ($.modalRewrite && !$.modalRewrite.classList.contains('hidden')) {
         $.modalRewrite.classList.add('hidden');
         state.rewriteIdeaId = null;
         state.selectedSuggestedTags.clear();
-      } else if (!$.modalSettings.classList.contains('hidden')) {
+      } else if ($.modalSettings && !$.modalSettings.classList.contains('hidden')) {
         $.modalSettings.classList.add('hidden');
-      } else if (!$.modalTags.classList.contains('hidden')) {
+      } else if ($.modalTags && !$.modalTags.classList.contains('hidden')) {
         $.modalTags.classList.add('hidden');
       }
     }
