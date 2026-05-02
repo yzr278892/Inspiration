@@ -130,6 +130,70 @@ body {
 #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 12px; z-index: 200; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
 #toast.show { opacity: 1; } #toast.error { background: var(--danger); }
 .hidden { display: none !important; }
+
+/* Settings panel */
+.section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+}
+.section-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 8px;
+}
+.section-hint {
+  font-size: 11px; color: var(--text-dim); margin: -4px 0 8px 0;
+}
+.section input[type="text"],
+.section input[type="url"],
+.section input[type="password"] {
+  width: 100%; border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; outline: none; background: var(--bg);
+  transition: border-color 0.15s;
+}
+.section input:focus { border-color: var(--accent); background: var(--surface); }
+.section select {
+  width: 100%; border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; outline: none; background: var(--bg);
+  cursor: pointer;
+}
+
+.row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 13px;
+}
+
+.key-btn {
+  padding: 6px 16px; border: 1px solid var(--border); border-radius: 8px;
+  cursor: pointer; background: var(--bg); font-size: 13px; font-family: var(--mono);
+  min-width: 150px; text-align: center; transition: all 0.15s;
+}
+.key-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+
+.key-badge {
+  font-size: 13px; font-family: var(--mono); font-weight: 600;
+  color: var(--accent); background: var(--accent-bg);
+  padding: 4px 12px; border-radius: 6px;
+}
+
+/* Toggle switch */
+.toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; cursor: pointer;
+  background: #d1d1d6; border-radius: 24px; transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: ""; position: absolute; left: 2px; bottom: 2px;
+  width: 20px; height: 20px; background: #fff; border-radius: 50%;
+  transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+.save-btn {
+  width: 100%; padding: 10px; font-size: 14px; font-weight: 600;
+  border-radius: 10px;
+}
 </style>
 </head>
 <body>
@@ -163,58 +227,62 @@ body {
     <div id="todo-list" style="padding:8px 16px;"></div>
   </div>
 
-  <!-- Settings panel (inline, not modal) -->
-  <div id="settings-panel" class="hidden">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--border);">
-      <h3 data-i18n="settingsTitle" style="font-size:14px;">设置</h3>
-      <button id="btn-settings-close" class="primary" style="padding:4px 12px;border-radius:6px;border:none;cursor:pointer;background:var(--accent);color:#fff;font-size:12px;" data-i18n="close">关闭</button>
+  <!-- Settings panel -->
+  <div id="settings-panel" class="hidden" style="overflow-y:auto;flex:1;padding:16px 20px;">
+    <div class="section">
+      <div class="section-title" data-i18n="language">语言 / Language</div>
+      <select id="lang-select" style="width:100%;">
+        <option value="zh">中文</option>
+        <option value="en">English</option>
+      </select>
     </div>
-    <div style="padding:12px 16px;overflow-y:auto;flex:1;">
-      <fieldset>
-        <legend data-i18n="language">语言 / Language</legend>
-        <label><select id="lang-select">
-          <option value="zh">中文</option>
-          <option value="en">English</option>
-        </select></label>
-      </fieldset>
-      <fieldset>
-        <legend data-i18n="shortcutLabel">快捷键</legend>
-        <label style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span data-i18n="captureShortcut" style="font-size:12px;color:var(--text-dim);">捕捉：</span>
-          <button id="btn-record-shortcut" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);font-size:13px;min-width:160px;text-align:center;">Ctrl+Shift+I</button>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;margin-top:6px;">
-          <span data-i18n="screenshotShortcut" style="font-size:12px;color:var(--text-dim);">截图：</span>
-          <span style="font-size:13px;color:var(--text);font-weight:600;">Ctrl+Shift+S</span>
-        </label>
-      </fieldset>
-      <fieldset>
-        <legend data-i18n="autostart">开机自启</legend>
-        <label style="display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="autostart-check" style="width:auto;">
-          <span data-i18n="autostartDesc" style="font-size:13px;">系统启动时自动运行</span>
-        </label>
-      </fieldset>
-      <fieldset>
-        <legend data-i18n="dataDir">数据目录</legend>
-        <label data-i18n="dataDirDesc">自定义数据库存储路径（留空使用默认，修改后需重启）</label>
-        <label><input type="text" id="data-dir-input" placeholder="留空使用默认"></label>
-      </fieldset>
-      <fieldset>
-        <legend data-i18n="webdavSync">WebDAV 同步</legend>
-        <label data-i18n="webdavUrl">地址 <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/"></label>
-        <label data-i18n="webdavUser">用户名 <input type="text" id="webdav-user"></label>
-        <label data-i18n="webdavPass">密码 <input type="password" id="webdav-pass"></label>
-      </fieldset>
-      <fieldset>
-        <legend data-i18n="aiConfig">AI 功能 (OpenAI 兼容 API)</legend>
-        <label data-i18n="aiKey">API 密钥 <input type="password" id="ai-key"></label>
-        <label data-i18n="aiEndpoint">接口地址 <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com"></label>
-        <label data-i18n="aiModel">模型 <input type="text" id="ai-model" placeholder="deepseek-v4-flash"></label>
-      </fieldset>
-      <div class="modal-actions">
-        <button id="btn-settings-save" class="primary" data-i18n="save">保存</button>
+
+    <div class="section">
+      <div class="section-title" data-i18n="shortcutLabel">快捷键</div>
+      <div class="row">
+        <span data-i18n="captureShortcut">捕捉</span>
+        <button id="btn-record-shortcut" class="key-btn">Ctrl+Shift+I</button>
       </div>
+      <div class="row">
+        <span data-i18n="screenshotShortcut">截图</span>
+        <span class="key-badge">Ctrl+Shift+S</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="autostart">开机自启</div>
+      <div class="row">
+        <span data-i18n="autostartDesc">系统启动时自动运行</span>
+        <label class="toggle">
+          <input type="checkbox" id="autostart-check">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="dataDir">数据目录</div>
+      <p class="section-hint" data-i18n="dataDirDesc">自定义数据库存储路径（留空使用默认，修改后需重启）</p>
+      <input type="text" id="data-dir-input" placeholder="留空使用默认">
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="webdavSync">WebDAV 同步</div>
+      <input type="url" id="webdav-url" placeholder="https://dav.example.com/remote.php/dav/files/user/" data-i18n-placeholder="webdavUrlPH">
+      <input type="text" id="webdav-user" placeholder="用户名" data-i18n-placeholder="webdavUserPH" style="margin-top:6px;">
+      <input type="password" id="webdav-pass" placeholder="密码" data-i18n-placeholder="webdavPassPH" style="margin-top:6px;">
+    </div>
+
+    <div class="section">
+      <div class="section-title" data-i18n="aiConfig">AI 功能</div>
+      <p class="section-hint">OpenAI 兼容 API</p>
+      <input type="password" id="ai-key" placeholder="API 密钥" data-i18n-placeholder="aiKeyPH">
+      <input type="url" id="ai-endpoint" placeholder="https://api.deepseek.com/v1" style="margin-top:6px;">
+      <input type="text" id="ai-model" placeholder="deepseek-v4-flash" style="margin-top:6px;">
+    </div>
+
+    <div style="padding:12px 0 24px;">
+      <button id="btn-settings-save" class="primary save-btn" data-i18n="save">保存</button>
     </div>
   </div>
 
@@ -419,7 +487,7 @@ function cacheDom() {
     'rewrite-suggested-tags', 'rewrite-tags-block',
     'btn-rewrite-cancel', 'btn-rewrite-apply',
     'modal-tags', 'tag-choices', 'tag-input-new', 'btn-tag-add-new', 'btn-tags-close',
-    'lang-select', 'settings-panel', 'btn-settings-save', 'btn-settings-close',
+    'lang-select', 'settings-panel', 'btn-settings-save',
     'btn-record-shortcut', 'autostart-check', 'data-dir-input',
   ];
   for (const id of ids) {
@@ -676,7 +744,7 @@ async function openSettings() {
     }
     const ac = await invoke('get_ai_config', {});
     const ak = document.getElementById('ai-key'); if (ak) ak.value = ac ? ac.api_key : '';
-    const ae = document.getElementById('ai-endpoint'); if (ae) ae.value = (ac && ac.endpoint) ? ac.endpoint : 'https://api.deepseek.com';
+    const ae = document.getElementById('ai-endpoint'); if (ae) ae.value = (ac && ac.endpoint) ? ac.endpoint : 'https://api.deepseek.com/v1';
     const am = document.getElementById('ai-model'); if (am) am.value = (ac && ac.model) ? ac.model : 'deepseek-v4-flash';
     try { const savedLang = await invoke('get_setting', { key: 'language' });
       if (savedLang) { lang = savedLang; }
@@ -778,7 +846,6 @@ function setupEvents() {
   });
   on($.btnRecordShortcut, 'click', startRecordShortcut);
   on($.btnSettingsSave, 'click', saveSettings);
-  on($.btnSettingsClose, 'click', closeSettings);
 
   on($.btnRewriteCancel, 'click', () => {
     if ($.modalRewrite) $.modalRewrite.classList.add('hidden');
@@ -908,6 +975,14 @@ async function init() {
   } catch (e) {}
 
   try { await loadTags(); } catch (e) {}
+
+  // Listen for screenshot-saved event
+  try {
+    await listen('screenshot-saved', () => {
+      switchToFull();
+      loadAndRender();
+    });
+  } catch (e) {}
 
   state.ready = true;
 }

@@ -105,7 +105,7 @@ fn get_ai_config_from_db(db: &Database) -> Result<AIConfig, String> {
         .ok_or("AI API key not configured")?;
     let endpoint = db
         .get_setting("ai_endpoint")?
-        .unwrap_or_else(|| "https://api.deepseek.com".into());
+        .unwrap_or_else(|| "https://api.deepseek.com/v1".into());
     let model = db
         .get_setting("ai_model")?
         .unwrap_or_else(|| "deepseek-v4-flash".into());
@@ -122,7 +122,7 @@ async fn call_ai_api(config: &AIConfig, content: &str, existing_tags: &[String])
     let endpoint = if config.endpoint.contains("/chat/completions") {
         config.endpoint.clone()
     } else {
-        format!("{}/v1/chat/completions", config.endpoint.trim_end_matches('/'))
+        format!("{}/chat/completions", config.endpoint.trim_end_matches('/'))
     };
 
     let prompt = format!(
@@ -228,7 +228,7 @@ pub fn get_ai_config(db: State<Database>) -> Result<Option<AIConfig>, String> {
         Some(key) => {
             let endpoint = db
                 .get_setting("ai_endpoint")?
-                .unwrap_or_else(|| "https://api.deepseek.com".into());
+                .unwrap_or_else(|| "https://api.deepseek.com/v1".into());
             let model = db
                 .get_setting("ai_model")?
                 .unwrap_or_else(|| "deepseek-v4-flash".into());

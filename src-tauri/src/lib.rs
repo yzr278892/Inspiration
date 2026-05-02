@@ -23,25 +23,30 @@ pub fn run() {
                 .with_handler(|app, shortcut, event| {
                     if event.state == tauri_plugin_global_shortcut::ShortcutState::Pressed {
                         let shortcut_str = shortcut.to_string();
-                        // Screenshot shortcut
+                        // Screenshot shortcut (Ctrl+Shift+S)
                         if shortcut_str.contains('S') && !shortcut_str.contains("Shift+I") {
                             let db = app.state::<db::Database>();
                             let app_dir = app.path().app_data_dir().unwrap_or_default();
-                            std::fs::create_dir_all(&app_dir).ok();
+                            let screenshots_dir = app_dir.join("screenshots");
+                            std::fs::create_dir_all(&screenshots_dir).ok();
                             let timestamp = Utc::now().format("%Y%m%d_%H%M%S");
                             let filename = format!("screenshot_{}.png", timestamp);
-                            let filepath = app_dir.join(&filename);
-                            if let Ok(screens) = screenshots::Screen::all() {
-                                if let Some(screen) = screens.first() {
-                                    if let Ok(image) = screen.capture() {
-                                        if image.save(&filepath).is_ok() {
-                                            let markdown = format!("![]({})", filepath.to_string_lossy());
-                                            if let Ok(idea) = db.add_idea(&markdown) {
-                                                if let Some(window) = app.get_webview_window("main") {
-                                                    let _ = window.emit("screenshot-saved", serde_json::json!(idea));
-                                                }
-                                            }
-                                        }
+                            let filepath = screenshots_dir.join(&filename);
+                            let result = (|| -> Result<(), String> {
+                                let screens = screenshots::Screen::all().map_err(|e| format!("Screen: {}", e))?;
+                                let screen = screens.first().ok_or("No screen")?;
+                                let image = screen.capture().map_err(|e| format!("Capture: {}", e))?;
+                                image.save(&filepath).map_err(|e| format!("Save: {}", e))?;
+                                Ok(())
+                            })();
+                            if result.is_ok() {
+                                let path_str = filepath.to_string_lossy().replace('\\', "/");
+                                let markdown = format!("![]({})", path_str);
+                                if let Ok(idea) = db.add_idea(&markdown) {
+                                    if let Some(window) = app.get_webview_window("main") {
+                                        let _ = window.emit("screenshot-saved", serde_json::json!({"id": idea.id, "path": path_str}));
+                                        let _ = window.show();
+                                        let _ = window.set_focus();
                                     }
                                 }
                             }
@@ -74,6 +79,7 @@ pub fn run() {
                                     let _ = window.center();
                                 }
                             }
+                            let _ = window.unminimize();
                             let _ = window.show();
                             let _ = window.set_focus();
                             let _ = window.emit("focus-input", ());
@@ -173,7 +179,7 @@ pub fn run() {
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 api.prevent_close();
-                let _ = window.hide();
+                let _ = window.minimize();
             }
         })
         .invoke_handler(tauri::generate_handler![
